@@ -251,9 +251,22 @@ select.inp option{background:var(--dark3);}
   display:flex;align-items:center;gap:12px;color:var(--red);}
 .closed-banner .icon{font-size:1.4rem;}
 
+/* HAMBURGER */
+.ham-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;}
+.ham-btn span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .2s;}
+.mob-menu{display:none;position:fixed;top:61px;left:0;right:0;z-index:99;
+  background:rgba(6,6,8,0.98);border-bottom:1px solid var(--border2);backdrop-filter:blur(20px);
+  padding:12px 1rem 16px;flex-direction:column;gap:4px;}
+.mob-menu.open{display:flex;}
+.mob-tab{padding:12px 16px;border-radius:8px;border:none;background:transparent;
+  color:var(--text-dim);font-family:'Noto Sans',sans-serif;font-size:.9rem;font-weight:600;
+  cursor:pointer;text-align:left;width:100%;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;}
+.mob-tab:hover,.mob-tab.on{color:#fff;background:var(--fifa-red);}
+
 /* Responsive */
 @media(max-width:700px){
   nav{display:none;}
+  .ham-btn{display:flex;}
   .hero{grid-template-columns:1fr;gap:28px;padding:32px 1rem 24px;}
   .stats{grid-template-columns:1fr 1fr;padding:0 1rem;}
   .grid2,.grid3{grid-template-columns:1fr;}
@@ -281,8 +294,18 @@ select.inp option{background:var(--dark3);}
       <button class="ntab" onclick="go('predicciones')">Predicciones</button>
       <button class="ntab" onclick="go('premios')">Premios</button>
     </nav>
+    <button class="ham-btn" onclick="togMenu()" id="ham-btn" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<div class="mob-menu" id="mob-menu">
+  <button class="mob-tab on" onclick="go('home');togMenu()">Inicio</button>
+  <button class="mob-tab" onclick="go('form');togMenu()">Mi Polla</button>
+  <button class="mob-tab" onclick="go('tabla');togMenu()">Tabla</button>
+  <button class="mob-tab" onclick="go('predicciones');togMenu()">Predicciones</button>
+  <button class="mob-tab" onclick="go('premios');togMenu()">Premios</button>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -582,6 +605,10 @@ function saveParts(){ /* no-op: Sheet es la fuente de verdad */ }
 
 // ═══════════════════════════════ NAV ═══════════════════════════════
 const PAGES = ['home','form','tabla','predicciones','premios'];
+function togMenu(){
+  document.getElementById('mob-menu').classList.toggle('open');
+}
+
 function go(name){
   PAGES.forEach(p=>{
     document.getElementById('pg-'+p).classList.toggle('on', p===name);
@@ -589,6 +616,11 @@ function go(name){
   document.querySelectorAll('.ntab').forEach((t,i)=>{
     t.classList.toggle('on', ['home','form','tabla','predicciones','premios'][i]===name);
   });
+  document.querySelectorAll('.mob-tab').forEach((t,i)=>{
+    t.classList.toggle('on', ['home','form','tabla','predicciones','premios'][i]===name);
+  });
+  // close mobile menu after navigation
+  document.getElementById('mob-menu').classList.remove('open');
   if(name==='tabla') loadTabla();
   if(name==='predicciones') loadPred();
   if(name==='premios') calcPremios();
@@ -868,16 +900,21 @@ async function loadPred(){
   document.getElementById('pred-content').innerHTML='';
   document.getElementById('pred-status').textContent='';
   
+  let fetchOk = false;
   try {
     const d = await jsonpFetch(GS_URL+'?action=getParticipants');
     if(Array.isArray(d)){
-      // check config flag
       const cfgRow = d.find(p=>p.id==='__config__');
-      if(cfgRow) cfg.visible = cfgRow.activo==='SI';
+      // Only hide if Sheet explicitly says NO
+      if(cfgRow) cfg.visible = cfgRow.activo!=='NO';
+      else cfg.visible = true; // default: show
       participants = d.filter(p=>p.id!=='__config__');
+      fetchOk = true;
     }
   } catch(e){
     console.log('loadPred error:', e);
+    // If fetch fails but we have participants cached, still show them
+    cfg.visible = true;
   }
   document.getElementById('pred-loading').style.display='none';
 
@@ -1178,16 +1215,21 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildHomeGroups();
   buildGroupsForm();
   buildElimForm();
-  updHome();
   if(document.getElementById('adm-ins')) document.getElementById('adm-ins').value = cfg.inscripcion;
   document.getElementById('blk-A')?.classList.add('open');
 
-  // Check if form should be closed (1h before first match: Jun 11 2026 15:00 UTC-5 = 20:00 UTC)
   const closeTime = new Date('2026-06-11T20:00:00Z');
   if(new Date()>=closeTime || cfg.closed){
     document.getElementById('form-closed-banner').style.display='block';
     document.getElementById('sub-bar').style.display='none';
   }
+
+  jsonpFetch(GS_URL+'?action=getParticipants').then(d=>{
+    if(Array.isArray(d)){
+      participants = d.filter(p=>p.id!=='__config__');
+      updHome();
+    }
+  }).catch(()=>{});
 });
 </script>
 </body>
