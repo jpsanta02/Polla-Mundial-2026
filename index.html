@@ -287,7 +287,13 @@ select.inp option{background:var(--dark3);}
       <h1 class="h-title" style="margin-top:14px">
         <span class="g">Polla</span><br>Mundial
       </h1>
-      <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:clamp(1.2rem,2.5vw,1.6rem);letter-spacing:4px;color:var(--fifa-blue);text-transform:uppercase;margin-top:4px">Canadá · EEUU · México</div>
+      <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:clamp(1.2rem,2.5vw,1.6rem);letter-spacing:4px;text-transform:uppercase;margin-top:4px">
+        <span style="color:var(--fifa-red)">Canadá</span>
+        <span style="color:var(--text-dim);font-weight:400"> · </span>
+        <span style="color:var(--fifa-blue)">EEUU</span>
+        <span style="color:var(--text-dim);font-weight:400"> · </span>
+        <span style="color:var(--fifa-green)">México</span>
+      </div>
       <p class="h-sub" style="margin-top:12px">Predice resultados, compite con amigos y familia. 48 equipos, 104 partidos, un campeón.</p>
       <div class="h-cta">
         <button class="btn btn-gold" onclick="go('form')">✏ Llenar mi Polla</button>
@@ -853,72 +859,91 @@ function renderTabla(){
 async function loadPred(){
   document.getElementById('pred-loading').style.display='block';
   document.getElementById('pred-content').innerHTML='';
+  document.getElementById('pred-status').textContent='';
+  
   try {
     const d = await jsonpFetch(GS_URL+'?action=getParticipants');
-    if(Array.isArray(d)) participants = d;
-    // check config flag from sheet
-    const cfgRow = d.find ? d.find(p=>p.id==='__config__') : null;
-    if(cfgRow) cfg.visible = cfgRow.activo==='SI';
-  } catch(e){}
+    if(Array.isArray(d)){
+      // check config flag
+      const cfgRow = d.find(p=>p.id==='__config__');
+      if(cfgRow) cfg.visible = cfgRow.activo==='SI';
+      participants = d.filter(p=>p.id!=='__config__');
+    }
+  } catch(e){
+    console.log('loadPred error:', e);
+  }
   document.getElementById('pred-loading').style.display='none';
 
   if(!cfg.visible){
     document.getElementById('pred-status').textContent='🔒 Las predicciones se publican automáticamente cuando empiece el Mundial.';
-    document.getElementById('pred-content').innerHTML='';
     return;
   }
 
   const active = participants.filter(p=>p.nombre&&p.activo==='ACTIVO');
   if(active.length===0){
-    document.getElementById('pred-content').innerHTML='<div class="loading" style="display:block"><p style="color:var(--text-dim)">No hay predicciones aún.</p></div>';
+    document.getElementById('pred-content').innerHTML='<div style="color:var(--text-dim);padding:20px">No hay predicciones aún.</div>';
     return;
   }
 
   document.getElementById('pred-status').textContent='Predicciones publicadas — '+active.length+' participantes';
 
-  // Build cards with expand/collapse
   document.getElementById('pred-content').innerHTML = '<div class="pred-grid">' +
     active.map((p,pi) => {
       const scores = p.data?.scores || {};
       let allMatches = [];
       Object.entries(GROUPS).forEach(([g,teams]) => {
         (scores[g]||[]).forEach((m,mi) => {
-          if(m.t1!==''||m.t2!==''){
+          if(m && (m.t1!==''||m.t2!='')){
+            const t1 = teams[GM[g][mi][0]] || '?';
+            const t2 = teams[GM[g][mi][1]] || '?';
             allMatches.push(`<div class="pred-match">
-              <span>${teams[GM[g][mi][0]]} vs ${teams[GM[g][mi][1]]}</span>
+              <span>${t1} vs ${t2}</span>
               <span class="pred-score">${m.t1||'?'} - ${m.t2||'?'}</span>
             </div>`);
           }
         });
       });
+
+      // Eliminatoria
+      const elim = p.data?.elim || {};
+      const rounds = [
+        {k:'r16', label:'16avos'},{k:'qf', label:'Cuartos'},{k:'sf', label:'Semis'},
+        {k:'final', label:'Final'},{k:'third', label:'3er puesto'}
+      ];
+      let elimLines = '';
+      rounds.forEach(({k,label})=>{
+        const v = elim[k];
+        if(v) elimLines += `<div class="pred-match"><span>${label}</span><span class="pred-score">${v}</span></div>`;
+      });
+
+      const qs = p.data?.questions || {};
+      const extraLines = [
+        qs.golesFavor   ? `<div class="pred-match"><span>Más goles a favor</span><span class="pred-score">${qs.golesFavor}</span></div>` : '',
+        qs.golesContra  ? `<div class="pred-match"><span>Más goles en contra</span><span class="pred-score">${qs.golesContra}</span></div>` : '',
+        qs.masGolesCopa ? `<div class="pred-match"><span>Más goles del torneo</span><span class="pred-score">${qs.masGolesCopa}</span></div>` : '',
+        qs.mejor3ro     ? `<div class="pred-match"><span>Mejor 3er lugar</span><span class="pred-score">${qs.mejor3ro}</span></div>` : '',
+        qs.goleador     ? `<div class="pred-match"><span>⚽ Goleador</span><span class="pred-score">${qs.goleador}</span></div>` : '',
+      ].join('');
+
       const preview = allMatches.slice(0,3).join('');
-      const rest = allMatches.slice(3).join('');
-      const goleador = p.data?.questions?.goleador || '—';
+      const rest = allMatches.slice(3).join('') + (elimLines ? `<div style="margin-top:6px;font-size:.7rem;color:var(--text-dim);letter-spacing:1px;padding:4px 0">ELIMINATORIA</div>${elimLines}` : '') + extraLines;
+
       return `<div class="pred-card">
         <div class="pred-card-hdr">
           <div class="pred-card-name">${p.nombre}</div>
           ${p.division?`<span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}">Div. ${p.division}</span>`:''}
         </div>
         <div class="pred-card-body">
-          ${preview||'<div style="color:var(--text-dim);font-size:.8rem">Sin predicciones</div>'}
-          ${rest ? `<div id="pred-rest-${pi}" style="display:none">${rest}
-            <div style="margin-top:8px;font-size:.72rem;color:var(--text-dim)">⚽ Goleador: <strong style="color:var(--text)">${goleador}</strong></div>
-          </div>
-          <button onclick="togPred(${pi})" id="pred-btn-${pi}" style="margin-top:8px;background:none;border:none;color:var(--gold);font-size:.75rem;cursor:pointer;padding:0;font-family:'Noto Sans',sans-serif">▼ ver todo (${allMatches.length} partidos)</button>`
-          : `<div style="margin-top:8px;font-size:.72rem;color:var(--text-dim)">⚽ Goleador: <strong style="color:var(--text)">${goleador}</strong></div>`}
+          ${preview||'<div style="color:var(--text-dim);font-size:.8rem">Sin predicciones de grupos</div>'}
+          ${rest ? `
+            <div id="pred-rest-${pi}" style="display:none">${rest}</div>
+            <button onclick="togPred(${pi})" id="pred-btn-${pi}" style="margin-top:8px;background:none;border:none;color:var(--gold);font-size:.75rem;cursor:pointer;padding:2px 0;font-family:'Noto Sans',sans-serif">▼ ver todo (${allMatches.length} partidos)</button>
+          ` : ''}
         </div>
       </div>`;
     }).join('') + '</div>';
 }
 
-function togPred(i){
-  const rest = document.getElementById('pred-rest-'+i);
-  const btn = document.getElementById('pred-btn-'+i);
-  if(!rest) return;
-  const open = rest.style.display === 'block';
-  rest.style.display = open ? 'none' : 'block';
-  if(btn) btn.textContent = open ? `▼ ver todo` : `▲ cerrar`;
-}
 
 // ═══════════════════════════════ PREMIOS ═══════════════════════════════
 function calcPremios(){
@@ -1108,10 +1133,12 @@ function jsonpFetch(url) {
 }
 
 function togPred(i){
-  const card = document.getElementById('pcard-'+i);
-  const chev = document.getElementById('pchev-'+i);
-  card.classList.toggle('expanded');
-  if(chev) chev.textContent = card.classList.contains('expanded') ? '▲ cerrar' : '▼ ver todo';
+  const rest = document.getElementById('pred-rest-'+i);
+  const btn = document.getElementById('pred-btn-'+i);
+  if(!rest) return;
+  const open = rest.style.display === 'block';
+  rest.style.display = open ? 'none' : 'block';
+  if(btn) btn.textContent = open ? '▼ ver todo' : '▲ cerrar';
 }
 
 // ═══════════════════════════════ TOAST ═══════════════════════════════
