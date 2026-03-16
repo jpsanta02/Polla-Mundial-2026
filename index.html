@@ -163,11 +163,49 @@ select.inp option{background:var(--dark3);}
 .pos-sel option{background:var(--dark3);}
 .pos-label{font-size:.68rem;color:var(--text-dim);font-weight:600;letter-spacing:1px;margin-bottom:3px;}
 
-.elim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.elim-match{background:var(--dark4);border:1px solid var(--border2);border-radius:10px;padding:13px;}
-.elim-lbl{font-size:.68rem;color:var(--gold);font-weight:600;letter-spacing:1.5px;margin-bottom:9px;font-family:'DM Mono',monospace;}
-.elim-note{font-size:.7rem;color:var(--text-dim);margin-top:7px;font-style:italic;}
-.elim-row{display:grid;grid-template-columns:1fr 38px 10px 38px 1fr;gap:5px;align-items:center;}
+/* ── BRACKET ── */
+.bracket-wrap{overflow-x:auto;padding-bottom:20px;}
+.bracket{display:flex;gap:0;align-items:stretch;min-width:900px;}
+.bracket-col{display:flex;flex-direction:column;justify-content:space-around;min-width:180px;padding:0 6px;}
+.bracket-col-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.7rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;text-align:center;padding:6px 0 10px;border-bottom:1px solid var(--border2);margin-bottom:8px;}
+.bracket-match{background:var(--dark3);border:1px solid var(--border2);border-radius:8px;margin:4px 0;position:relative;transition:border-color .2s;}
+.bracket-match:hover{border-color:rgba(201,168,76,0.3);}
+.bracket-match.locked{opacity:.6;pointer-events:none;}
+.bm-team{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--border2);cursor:pointer;}
+.bm-team:last-of-type{border-bottom:none;}
+.bm-team.winner{background:rgba(201,168,76,0.08);}
+.bm-team.winner .bm-name{color:var(--gold);font-weight:700;}
+.bm-name{font-size:.78rem;flex:1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bm-name.tbd{color:var(--text-dim);font-style:italic;}
+.bm-score{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:4px;width:28px;height:24px;display:flex;align-items:center;justify-content:center;}
+.bm-score input{width:28px;height:24px;background:none;border:none;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.82rem;padding:0;}
+.bm-pts{font-size:.6rem;color:var(--text-dim);text-align:center;padding:3px 0;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;letter-spacing:1px;}
+.bracket-connector{display:flex;flex-direction:column;justify-content:space-around;width:16px;flex-shrink:0;}
+.bracket-final-col{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:200px;gap:12px;}
+.bracket-trophy{text-align:center;padding:12px;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.3);border-radius:12px;}
+.bracket-trophy .trophy-icon{font-size:2rem;display:block;margin-bottom:6px;}
+.bracket-trophy .trophy-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.75rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+
+/* Mobile bracket — ronda por ronda */
+.bracket-tabs{display:none;gap:4px;margin-bottom:16px;flex-wrap:wrap;}
+.bracket-tab{padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;font-family:'Noto Sans',sans-serif;transition:all .2s;}
+.bracket-tab.on{background:var(--fifa-red);color:#fff;border-color:var(--fifa-red);}
+.bracket-mobile{display:none;}
+.bracket-mobile-col{display:none;}
+.bracket-mobile-col.on{display:block;}
+.bracket-mobile-match{background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:12px;margin-bottom:10px;}
+.bmm-header{font-size:.65rem;color:var(--gold);letter-spacing:2px;font-family:'DM Mono',monospace;margin-bottom:8px;text-transform:uppercase;}
+.bmm-row{display:flex;align-items:center;gap:8px;padding:6px 0;}
+.bmm-row+.bmm-row{border-top:1px solid var(--border2);}
+.bmm-team{flex:1;font-size:.83rem;color:var(--text);}
+.bmm-team.tbd{color:var(--text-dim);font-style:italic;}
+.bmm-score input{width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;padding:0;}
+
+@media(max-width:700px){
+  .bracket-wrap{display:none;}
+  .bracket-tabs{display:flex;}
+  .bracket-mobile{display:block;}
+}
 
 /* Submit bar */
 .sub-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;
@@ -405,19 +443,22 @@ select.inp option{background:var(--dark3);}
         <input class="inp" id="q-gol" type="text" placeholder="Ej: Lionel Messi"></div>
     </div>
 
-    <!-- ELIM -->
+    <!-- ELIM BRACKET -->
     <div id="ph-elim" style="display:none">
       <div style="background:rgba(41,128,185,0.08);border:1px solid rgba(41,128,185,0.2);border-radius:9px;padding:13px 16px;margin-bottom:18px;font-size:.83rem;color:var(--text-mid);line-height:1.7">
-        ⚽ <strong style="color:var(--text)">Resultado = 90 minutos.</strong> Si predices empate, igual debes indicar quién clasifica (se entiende que pasa por prórroga o penales).
+        🏆 <strong style="color:var(--text)">Bracket de Eliminación Directa.</strong> Predice el marcador de 90 minutos e indica el ganador (clasificado en caso de empate/penales).
       </div>
-      <div id="elim-form"></div>
-      <div class="sec">Preguntas adicionales <span class="badge">45 PTS</span></div>
-      <div class="grid2">
-        <div class="field"><label>Tercer puesto (25 pts)</label>
-          <select class="inp" id="q-3ro"><option value="">-- Selecciona --</option></select></div>
-        <div class="field"><label>Cuarto puesto (20 pts)</label>
-          <select class="inp" id="q-4to"><option value="">-- Selecciona --</option></select></div>
+
+      <!-- Tabs móvil -->
+      <div class="bracket-tabs" id="bracket-tabs"></div>
+
+      <!-- Bracket desktop -->
+      <div class="bracket-wrap">
+        <div class="bracket" id="bracket-desktop"></div>
       </div>
+
+      <!-- Bracket móvil -->
+      <div class="bracket-mobile" id="bracket-mobile"></div>
     </div>
   </div>
 </div>
@@ -716,32 +757,283 @@ function buildGroupsForm(){
   ['q-gf','q-gc','q-mgc','q-m3ro'].forEach(id=>{ document.getElementById(id).innerHTML=tOpts; });
 }
 
-function buildElimForm(){
-  const tOpts = '<option value="">-- Equipo --</option>'+ALL_TEAMS.map(t=>`<option value="${t}">${t}</option>`).join('');
-  document.getElementById('elim-form').innerHTML =
-    ELIM_ROUNDS.map((rnd,ri)=>{
-      const matches = Array.from({length:rnd.n},(_,mi)=>`
-        <div class="elim-match">
-          <div class="elim-lbl">${rnd.name} · P${mi+1}</div>
-          <div class="elim-row">
-            <select class="pos-sel" id="el${ri}m${mi}t1" style="padding:7px">${tOpts}</select>
-            <input class="score-inp" type="number" min="0" max="15" id="el${ri}m${mi}g1" placeholder="0">
-            <div class="match-sep">-</div>
-            <input class="score-inp" type="number" min="0" max="15" id="el${ri}m${mi}g2" placeholder="0">
-            <select class="pos-sel" id="el${ri}m${mi}t2" style="padding:7px">${tOpts}</select>
-          </div>
-          <div class="elim-note">Ganador (clasificado en caso de empate):</div>
-          <select class="pos-sel" id="el${ri}m${mi}win" style="margin-top:5px;width:100%;padding:7px">${tOpts}</select>
-        </div>`).join('');
-      return `
-        <div class="sec">${rnd.name} <span class="badge">${rnd.pts} PTS</span>
-          <span style="margin-left:auto;font-size:.72rem;color:var(--text-dim);font-family:'DM Mono',monospace">${rnd.dates}</span>
-        </div>
-        <div class="elim-grid">${matches}</div>`;
-    }).join('');
+// ═══════════════════════════════ BRACKET ELIMINATORIA ═══════════════════════════════
 
-  const tOpts2 = '<option value="">-- Selecciona --</option>'+ALL_TEAMS.map(t=>`<option value="${t}">${t}</option>`).join('');
-  ['q-3ro','q-4to'].forEach(id=>{ document.getElementById(id).innerHTML=tOpts2; });
+// Bracket oficial FIFA World Cup 2026
+// t1/t2 se llenan desde el Sheet. lbl1/lbl2 son las etiquetas oficiales.
+const BRACKET_R16_DEF = [
+  // LADO IZQUIERDO (0-7)
+  {id:0,  lado:'L', lbl1:'1E',  lbl2:'Mejor 3° A/B/C/D/F', ciudad:'Boston',    fecha:'28 jun'},
+  {id:1,  lado:'L', lbl1:'1I',  lbl2:'Mejor 3° C/D/F/G/H', ciudad:'NY',        fecha:'28 jun'},
+  {id:2,  lado:'L', lbl1:'2A',  lbl2:'2B',                  ciudad:'LA',        fecha:'29 jun'},
+  {id:3,  lado:'L', lbl1:'1F',  lbl2:'2C',                  ciudad:'Monterrey', fecha:'29 jun'},
+  {id:4,  lado:'L', lbl1:'2K',  lbl2:'2L',                  ciudad:'Toronto',   fecha:'30 jun'},
+  {id:5,  lado:'L', lbl1:'1H',  lbl2:'2J',                  ciudad:'Dallas',    fecha:'30 jun'},
+  {id:6,  lado:'L', lbl1:'1D',  lbl2:'Mejor 3° B/E/F/I/J',  ciudad:'Seattle',   fecha:'1 jul'},
+  {id:7,  lado:'L', lbl1:'1G',  lbl2:'Mejor 3° A/E/H/I/J',  ciudad:'Seattle',   fecha:'1 jul'},
+  // LADO DERECHO (8-15)
+  {id:8,  lado:'R', lbl1:'1C',  lbl2:'2F',                  ciudad:'Houston',   fecha:'28 jun'},
+  {id:9,  lado:'R', lbl1:'2E',  lbl2:'2I',                  ciudad:'NY',        fecha:'28 jun'},
+  {id:10, lado:'R', lbl1:'1A',  lbl2:'Mejor 3° G/E/F/N/T',  ciudad:'Dallas',    fecha:'29 jun'},
+  {id:11, lado:'R', lbl1:'1L',  lbl2:'Mejor 3° E/H/I/J/K',  ciudad:'Dallas',    fecha:'29 jun'},
+  {id:12, lado:'R', lbl1:'1J',  lbl2:'2H',                  ciudad:'Atlanta',   fecha:'30 jun'},
+  {id:13, lado:'R', lbl1:'2D',  lbl2:'2G',                  ciudad:'CDMX',      fecha:'30 jun'},
+  {id:14, lado:'R', lbl1:'1B',  lbl2:'Mejor 3° E/F/G/U',    ciudad:'Vancouver', fecha:'1 jul'},
+  {id:15, lado:'R', lbl1:'1K',  lbl2:'Mejor 3° E/H/I/J/K',  ciudad:'Kansas',    fecha:'1 jul'},
+];
+
+// Estado del bracket del participante (se carga/guarda localmente)
+let bracketPred = {
+  r16:   Array.from({length:16}, (_,i) => ({g1:'', g2:'', win:''})),
+  r8:    Array.from({length:8},  (_,i) => ({g1:'', g2:'', win:''})),
+  r4:    Array.from({length:4},  (_,i) => ({g1:'', g2:'', win:''})),
+  r2:    Array.from({length:2},  (_,i) => ({g1:'', g2:'', win:''})),
+  final: [{g1:'', g2:'', win:''}],
+  third: [{g1:'', g2:'', win:''}],
+};
+
+// Equipos reales de 16avos (llenan desde Sheet)
+let bracketTeams = Array.from({length:16}, (_,i) => ({
+  t1: BRACKET_R16_DEF[i].lbl1,
+  t2: BRACKET_R16_DEF[i].lbl2,
+}));
+
+// Encadenamiento: qué ganadores alimentan cada partido de rondas siguientes
+// Octavos: ganador P0 vs P1 → Oct P0; ganador P2 vs P3 → Oct P1; etc.
+// Izquierda: [0,1]→oct0, [2,3]→oct1, [4,5]→oct2, [6,7]→oct3
+// Derecha:   [8,9]→oct4, [10,11]→oct5, [12,13]→oct6, [14,15]→oct7
+// Cuartos: oct[0,1]→cua0, oct[2,3]→cua1, oct[4,5]→cua2, oct[6,7]→cua3
+// Semis: cua[0,1]→semi0, cua[2,3]→semi1
+// Final: semi0 vs semi1
+// 3er: perdedor semi0 vs perdedor semi1
+
+function getBracketTeams(rnd, idx){
+  if(rnd === 'r16') return bracketTeams[idx] || {t1:'', t2:''};
+  const prev = {
+    r8:    [ [0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15] ],
+    r4:    [ [0,1],[2,3],[4,5],[6,7] ],
+    r2:    [ [0,1],[2,3] ],
+    final: [ [0,1] ],
+    third: [ [0,1] ], // perdedores de semis
+  };
+  const prevRnd = {r8:'r16', r4:'r8', r2:'r4', final:'r2', third:'r2'};
+  const pairs = prev[rnd];
+  if(!pairs || !pairs[idx]) return {t1:'?', t2:'?'};
+  const [ia, ib] = pairs[idx];
+  const pRnd = prevRnd[rnd];
+  const isThird = rnd === 'third';
+  const getWin = (r, i) => {
+    const p = bracketPred[r]?.[i];
+    if(!p?.win) return null;
+    return p.win;
+  };
+  const getLose = (r, i) => {
+    const p = bracketPred[r]?.[i];
+    if(!p?.win) return null;
+    const teams = getBracketTeams(r, i);
+    return p.win === teams.t1 ? teams.t2 : teams.t1;
+  };
+  const t1 = isThird ? getLose(pRnd, ia) : getWin(pRnd, ia);
+  const t2 = isThird ? getLose(pRnd, ib) : getWin(pRnd, ib);
+  return {t1: t1||'?', t2: t2||'?'};
+}
+
+function buildElimForm(){
+  buildBracketDesktop();
+  buildBracketMobile();
+}
+
+function renderBracketMatch(rnd, idx, mobile=false){
+  const {t1, t2} = getBracketTeams(rnd, idx);
+  const tbd = t1==='?' || t2==='?' || !t1 || !t2;
+  const p = bracketPred[rnd]?.[idx] || {};
+  const pts = {r16:5, r8:10, r4:20, r2:35, final:60, third:25}[rnd];
+  const rndLabel = {r16:'16avos', r8:'Octavos', r4:'Cuartos', r2:'Semis', final:'Final', third:'3er Puesto'}[rnd];
+  const def = BRACKET_R16_DEF[idx];
+  const info = rnd==='r16' && def ? `${def.ciudad} · ${def.fecha}` : '';
+
+  if(mobile){
+    return `<div class="bracket-mobile-match" id="bmm_${rnd}_${idx}">
+      <div class="bmm-header">${rndLabel} · P${idx+1} · <span style="color:var(--gold)">${pts} pts</span>${info?` · <span style="color:var(--text-dim)">${info}</span>`:''}
+      </div>
+      <div class="bmm-row">
+        <span class="bmm-team${!t1||t1==='?'?' tbd':''}" id="bmt1_${rnd}_${idx}">${t1||'Por definir'}</span>
+        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g1" placeholder="0" value="${p.g1||''}"
+          ${tbd?'disabled':''}
+          style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
+          oninput="onBracketInput('${rnd}',${idx})">
+      </div>
+      <div class="bmm-row">
+        <span class="bmm-team${!t2||t2==='?'?' tbd':''}" id="bmt2_${rnd}_${idx}">${t2||'Por definir'}</span>
+        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g2" placeholder="0" value="${p.g2||''}"
+          ${tbd?'disabled':''}
+          style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
+          oninput="onBracketInput('${rnd}',${idx})">
+      </div>
+      ${!tbd?`<div style="margin-top:8px;font-size:.72rem;color:var(--text-dim)">Ganador / clasifica:</div>
+      <select id="bm_${rnd}_${idx}_win" style="width:100%;margin-top:4px;background:var(--dark4);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--text);font-size:.8rem;outline:none;" onchange="onBracketWin('${rnd}',${idx})">
+        <option value="">-- Selecciona ganador --</option>
+        <option value="${t1}" ${p.win===t1?'selected':''}>${t1}</option>
+        <option value="${t2}" ${p.win===t2?'selected':''}>${t2}</option>
+      </select>`:'<div style="margin-top:6px;font-size:.72rem;color:var(--text-dim);font-style:italic">Equipos por definir</div>'}
+    </div>`;
+  }
+
+  // Desktop
+  return `<div class="bracket-match${tbd?' locked':''}" id="bkm_${rnd}_${idx}">
+    <div class="bm-team${p.win===t1?' winner':''}">
+      <span class="bm-name${!t1||t1==='?'?' tbd':''}" id="bkt1_${rnd}_${idx}">${t1||'Por definir'}</span>
+      <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g1"
+        placeholder="0" value="${p.g1||''}" ${tbd?'disabled':''}
+        oninput="onBracketInput('${rnd}',${idx})"></div>
+    </div>
+    <div class="bm-team${p.win===t2?' winner':''}">
+      <span class="bm-name${!t2||t2==='?'?' tbd':''}" id="bkt2_${rnd}_${idx}">${t2||'Por definir'}</span>
+      <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g2"
+        placeholder="0" value="${p.g2||''}" ${tbd?'disabled':''}
+        oninput="onBracketInput('${rnd}',${idx})"></div>
+    </div>
+    <div class="bm-pts">
+      ${!tbd?`<select id="bk_${rnd}_${idx}_win"
+        style="background:var(--dark4);border:none;color:var(--gold);font-size:.65rem;font-family:'DM Mono',monospace;width:100%;padding:2px 4px;outline:none;cursor:pointer;"
+        onchange="onBracketWin('${rnd}',${idx})">
+        <option value="">ganador</option>
+        <option value="${t1}" ${p.win===t1?'selected':''}>${t1}</option>
+        <option value="${t2}" ${p.win===t2?'selected':''}>${t2}</option>
+      </select>`:`<span style="color:var(--text-dim);font-size:.65rem">${pts} pts</span>`}
+    </div>
+    ${rnd==='r16'&&info?`<div style="font-size:.6rem;color:var(--text-dim);text-align:center;padding:2px 0;border-top:1px solid var(--border2)">${info}</div>`:''}
+  </div>`;
+}
+
+function buildBracketDesktop(){
+  const el = document.getElementById('bracket-desktop');
+  if(!el) return;
+
+  const col = (title, rnd, idxs) =>
+    `<div class="bracket-col">
+      <div class="bracket-col-title">${title}</div>
+      ${idxs.map(i => renderBracketMatch(rnd, i)).join('')}
+    </div>`;
+
+  el.innerHTML =
+    col('16avos de Final · 5pts', 'r16', [0,1,2,3,4,5,6,7]) +
+    col('Octavos · 10pts', 'r8', [0,1,2,3]) +
+    col('Cuartos · 20pts', 'r4', [0,1]) +
+    col('Semis · 35pts', 'r2', [0]) +
+    `<div class="bracket-final-col">
+      <div class="bracket-trophy"><span class="trophy-icon">🏆</span><div class="trophy-title">Final · 19 Jul · 60pts</div></div>
+      ${renderBracketMatch('final', 0)}
+      <div style="margin-top:10px;padding:8px;background:var(--dark3);border:1px solid var(--border2);border-radius:8px;width:100%">
+        <div style="font-size:.62rem;color:var(--text-dim);letter-spacing:1px;text-align:center;margin-bottom:6px">3ER PUESTO · 18 Jul · 25pts</div>
+        ${renderBracketMatch('third', 0)}
+      </div>
+    </div>` +
+    col('Semis · 35pts', 'r2', [1]) +
+    col('Cuartos · 20pts', 'r4', [2,3]) +
+    col('Octavos · 10pts', 'r8', [4,5,6,7]) +
+    col('16avos de Final · 5pts', 'r16', [8,9,10,11,12,13,14,15]);
+}
+
+function buildBracketMobile(){
+  const tabsEl = document.getElementById('bracket-tabs');
+  const mobileEl = document.getElementById('bracket-mobile');
+  if(!tabsEl||!mobileEl) return;
+
+  const rounds = [
+    {key:'r16',  label:'16avos', n:16},
+    {key:'r8',   label:'Octavos', n:8},
+    {key:'r4',   label:'Cuartos', n:4},
+    {key:'r2',   label:'Semis',   n:2},
+    {key:'final',label:'Final',   n:1},
+    {key:'third',label:'3er P.',  n:1},
+  ];
+
+  tabsEl.innerHTML = rounds.map((r,i) =>
+    `<button class="bracket-tab${i===0?' on':''}" onclick="switchBracketTab('${r.key}',this)">${r.label}</button>`
+  ).join('');
+
+  mobileEl.innerHTML = rounds.map((r,i) =>
+    `<div class="bracket-mobile-col${i===0?' on':''}" id="bmc_${r.key}">
+      ${Array.from({length:r.n},(_,idx) => renderBracketMatch(r.key, idx, true)).join('')}
+    </div>`
+  ).join('');
+}
+
+function switchBracketTab(key, btn){
+  document.querySelectorAll('.bracket-tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.bracket-mobile-col').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('bmc_'+key)?.classList.add('on');
+}
+
+function onBracketInput(rnd, idx){
+  const g1k = `bk_${rnd}_${idx}_g1`, g2k = `bk_${rnd}_${idx}_g2`;
+  const g1m = `bm_${rnd}_${idx}_g1`, g2m = `bm_${rnd}_${idx}_g2`;
+  const g1 = parseInt(document.getElementById(g1k)?.value ?? document.getElementById(g1m)?.value ?? '');
+  const g2 = parseInt(document.getElementById(g2k)?.value ?? document.getElementById(g2m)?.value ?? '');
+
+  // Sync desktop ↔ mobile values
+  if(document.getElementById(g1k)) document.getElementById(g1k).value = document.getElementById(g1k).value;
+  if(document.getElementById(g1m)) document.getElementById(g1m).value = document.getElementById(g1k)?.value || document.getElementById(g1m)?.value || '';
+
+  if(!isNaN(g1) && !isNaN(g2)){
+    bracketPred[rnd][idx].g1 = g1;
+    bracketPred[rnd][idx].g2 = g2;
+    // Auto-select winner if scores differ
+    if(g1 !== g2){
+      const {t1, t2} = getBracketTeams(rnd, idx);
+      const win = g1 > g2 ? t1 : t2;
+      bracketPred[rnd][idx].win = win;
+      ['bk','bm'].forEach(pre => {
+        const sel = document.getElementById(`${pre}_${rnd}_${idx}_win`);
+        if(sel) sel.value = win;
+      });
+      propagateBracket(rnd, idx);
+    }
+  }
+}
+
+function onBracketWin(rnd, idx){
+  // Read winner from whichever selector changed
+  const win = document.getElementById(`bk_${rnd}_${idx}_win`)?.value ||
+              document.getElementById(`bm_${rnd}_${idx}_win`)?.value || '';
+  bracketPred[rnd][idx].win = win;
+  // Sync both selectors
+  ['bk','bm'].forEach(pre => {
+    const sel = document.getElementById(`${pre}_${rnd}_${idx}_win`);
+    if(sel && sel.value !== win) sel.value = win;
+  });
+  propagateBracket(rnd, idx);
+}
+
+function propagateBracket(rnd, idx){
+  // Find next round and position
+  const next = {r16:'r8', r8:'r4', r4:'r2', r2:'final'};
+  const nextRnd = next[rnd];
+  if(!nextRnd) return;
+
+  // For 'third', losers of r2 feed it
+  const nextIdx = Math.floor(idx / 2);
+
+  // Re-render the affected next round match
+  refreshBracketMatch(nextRnd, nextIdx);
+
+  // Also refresh third place if r2 changed
+  if(rnd === 'r2') refreshBracketMatch('third', 0);
+}
+
+function refreshBracketMatch(rnd, idx){
+  // Re-render desktop
+  const dkEl = document.getElementById(`bkm_${rnd}_${idx}`);
+  if(dkEl) dkEl.outerHTML = renderBracketMatch(rnd, idx, false);
+
+  // Re-render mobile
+  const mbEl = document.getElementById(`bmm_${rnd}_${idx}`);
+  if(mbEl) mbEl.outerHTML = renderBracketMatch(rnd, idx, true);
+
+  // Propagate further if this round also has a winner
+  if(bracketPred[rnd]?.[idx]?.win) propagateBracket(rnd, idx);
 }
 
 function togGrp(g){ document.getElementById('blk-'+g).classList.toggle('open'); }
