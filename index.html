@@ -589,6 +589,8 @@ cfg.inscripcion = cfg.inscripcion||100000;
 cfg.corte = cfg.corte||50;
 cfg.closed = cfg.closed||false;
 cfg.visible = cfg.visible||false;
+cfg.grupos_abierto = cfg.grupos_abierto!==undefined ? cfg.grupos_abierto : true;
+cfg.eliminatoria_abierta = cfg.eliminatoria_abierta||false;
 
 function saveCfg(){
   cfg.password = document.getElementById('adm-pass-cfg')?.value||cfg.password;
@@ -605,6 +607,30 @@ function saveParts(){ /* no-op: Sheet es la fuente de verdad */ }
 
 // ═══════════════════════════════ NAV ═══════════════════════════════
 const PAGES = ['home','form','tabla','predicciones','premios'];
+function applyFormState(){
+  const banner = document.getElementById('form-closed-banner');
+  const content = document.getElementById('form-content');
+  const subBar = document.getElementById('sub-bar');
+  if(!banner || !content) return;
+
+  const closeTime = new Date('2026-06-11T20:00:00Z');
+  const timeClosed = new Date() >= closeTime;
+
+  if(!cfg.grupos_abierto || timeClosed || cfg.closed){
+    banner.style.display = 'block';
+    banner.querySelector('.closed-banner div:last-child').innerHTML =
+      !cfg.grupos_abierto
+        ? '<strong>Formulario de grupos cerrado.</strong> El organizador ha cerrado las inscripciones.'
+        : '<strong>El formulario está cerrado.</strong> Las predicciones se publicarán cuando empiece el Mundial.';
+    content.style.display = 'none';
+    if(subBar) subBar.style.display = 'none';
+  } else {
+    banner.style.display = 'none';
+    content.style.display = 'block';
+    if(subBar) subBar.style.display = 'block';
+  }
+}
+
 function togMenu(){
   document.getElementById('mob-menu').classList.toggle('open');
 }
@@ -905,15 +931,19 @@ async function loadPred(){
     const d = await jsonpFetch(GS_URL+'?action=getParticipants');
     if(Array.isArray(d)){
       const cfgRow = d.find(p=>p.id==='__config__');
-      // Only hide if Sheet explicitly says NO
-      if(cfgRow) cfg.visible = cfgRow.activo!=='NO';
-      else cfg.visible = true; // default: show
+      if(cfgRow){
+        cfg.visible = cfgRow.activo!=='NO';
+        cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
+        cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
+      } else {
+        cfg.visible = true;
+      }
       participants = d.filter(p=>p.id!=='__config__');
       fetchOk = true;
+      applyFormState();
     }
   } catch(e){
     console.log('loadPred error:', e);
-    // If fetch fails but we have participants cached, still show them
     cfg.visible = true;
   }
   document.getElementById('pred-loading').style.display='none';
@@ -1217,17 +1247,19 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildElimForm();
   if(document.getElementById('adm-ins')) document.getElementById('adm-ins').value = cfg.inscripcion;
   document.getElementById('blk-A')?.classList.add('open');
-
-  const closeTime = new Date('2026-06-11T20:00:00Z');
-  if(new Date()>=closeTime || cfg.closed){
-    document.getElementById('form-closed-banner').style.display='block';
-    document.getElementById('sub-bar').style.display='none';
-  }
+  applyFormState(); // aplica estado inicial (antes de cargar del Sheet)
 
   jsonpFetch(GS_URL+'?action=getParticipants').then(d=>{
     if(Array.isArray(d)){
+      const cfgRow = d.find(p=>p.id==='__config__');
+      if(cfgRow){
+        cfg.visible = cfgRow.activo!=='NO';
+        cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
+        cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
+      }
       participants = d.filter(p=>p.id!=='__config__');
       updHome();
+      applyFormState();
     }
   }).catch(()=>{});
 });
