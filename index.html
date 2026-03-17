@@ -163,6 +163,11 @@ select.inp option{background:var(--dark3);}
 .pos-sel option{background:var(--dark3);}
 .pos-label{font-size:.68rem;color:var(--text-dim);font-weight:600;letter-spacing:1px;margin-bottom:3px;}
 
+/* Remove number input arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;}
+
 /* ── BRACKET ── */
 .bracket-wrap{overflow-x:auto;padding-bottom:20px;}
 .bracket{display:flex;gap:0;align-items:stretch;min-width:900px;}
@@ -426,27 +431,27 @@ select.inp option{background:var(--dark3);}
     <div id="ph-grupos">
       <div id="grps-form"></div>
 
-      <div class="sec">Preguntas adicionales <span class="badge">90 PTS</span></div>
+      <div class="sec">Preguntas adicionales <span class="badge">75 PTS</span></div>
       <div class="grid2" style="margin-bottom:12px">
         <div class="field"><label>Equipo con más goles anotados (15 pts)</label>
           <select class="inp" id="q-gf"><option value="">-- Selecciona --</option></select></div>
-        <div class="field"><label>Equipo con más goles en contra (15 pts)</label>
-          <select class="inp" id="q-gc"><option value="">-- Selecciona --</option></select></div>
-      </div>
-      <div class="grid2" style="margin-bottom:12px">
         <div class="field"><label>Equipo con menos goles en contra (15 pts)</label>
           <select class="inp" id="q-mgc"><option value="">-- Selecciona --</option></select></div>
-        <div class="field"><label>Mejor tercer lugar de grupos (15 pts)</label>
-          <select class="inp" id="q-m3ro"><option value="">-- Selecciona --</option></select></div>
       </div>
-      <div class="field"><label>Goleador del torneo — nombre del jugador (30 pts)</label>
-        <input class="inp" id="q-gol" type="text" placeholder="Ej: Lionel Messi"></div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field"><label>Equipo con más goles en contra (15 pts)</label>
+          <select class="inp" id="q-gc"><option value="">-- Selecciona --</option></select></div>
+        <div class="field"><label>Equipo con más tarjetas amarillas (15 pts)</label>
+          <select class="inp" id="q-tar"><option value="">-- Selecciona --</option></select></div>
+      </div>
+      <div class="field" style="margin-bottom:12px"><label>Equipo del goleador del torneo (15 pts)</label>
+        <select class="inp" id="q-gol"><option value="">-- Selecciona --</option></select></div>
     </div>
 
     <!-- ELIM BRACKET -->
     <div id="ph-elim" style="display:none">
       <div style="background:rgba(41,128,185,0.08);border:1px solid rgba(41,128,185,0.2);border-radius:9px;padding:13px 16px;margin-bottom:18px;font-size:.83rem;color:var(--text-mid);line-height:1.7">
-        🏆 <strong style="color:var(--text)">Bracket de Eliminación Directa.</strong> Predice el marcador de 90 minutos e indica el ganador (clasificado en caso de empate/penales).
+        🏆 <strong style="color:var(--text)">Llave de Eliminación Directa.</strong> Predice el marcador de 90 minutos e indica el ganador (clasificado en caso de empate/penales).
       </div>
 
       <!-- Tabs móvil -->
@@ -529,7 +534,7 @@ select.inp option{background:var(--dark3);}
   <div style="display:flex;gap:20px;margin-bottom:28px;flex-wrap:wrap;align-items:center">
     <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:14px 20px">
       <div style="color:var(--text-dim);font-size:.75rem;letter-spacing:1px;margin-bottom:4px">INSCRIPCIÓN</div>
-      <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:1.8rem;color:var(--gold)">$130.000</div>
+      <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:1.8rem;color:var(--gold)">$125.000</div>
     </div>
     <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:14px 20px">
       <div style="color:var(--text-dim);font-size:.75rem;letter-spacing:1px;margin-bottom:4px">PARTICIPANTES ACTIVOS</div>
@@ -554,9 +559,8 @@ select.inp option{background:var(--dark3);}
           <tr><td style="color:var(--text-dim);padding:4px 0">Marcador exacto ambos</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">5 pts</td></tr>
           <tr><td style="color:var(--text-dim);padding:4px 0">Posición exacta en grupo</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">3 pts c/u</td></tr>
           <tr><td style="color:var(--text-dim);padding:4px 0">Goleador del torneo</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">30 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Más goles anotados / en contra</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts c/u</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Menos goles en contra</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Mejor tercer lugar grupos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
+          <tr><td style="color:var(--text-dim);padding:4px 0">Más goles anotados / menos en contra / más en contra</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts c/u</td></tr>
+          <tr><td style="color:var(--text-dim);padding:4px 0">Más tarjetas amarillas / equipo del goleador</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts c/u</td></tr>
         </table>
       </div>
       <div>
@@ -708,7 +712,7 @@ function buildHomeGroups(){
 function updHome(){
   const active = participants.filter(p=>p.activo==='ACTIVO');
   document.getElementById('st-part').textContent = active.length||'0';
-  const bolsa = active.length * 117000;
+  const bolsa = active.length * 125000 * 0.9;
   document.getElementById('st-bolsa').textContent =
     bolsa>=1000000 ? '$'+(bolsa/1000000).toFixed(1)+'M' : '$'+bolsa.toLocaleString('es-CO');
 }
@@ -754,7 +758,7 @@ function buildGroupsForm(){
     }).join('');
 
   const tOpts = '<option value="">-- Selecciona --</option>'+teamOpts;
-  ['q-gf','q-gc','q-mgc','q-m3ro'].forEach(id=>{ document.getElementById(id).innerHTML=tOpts; });
+  ['q-gf','q-gc','q-mgc','q-tar','q-gol'].forEach(id=>{ document.getElementById(id).innerHTML=tOpts; });
 }
 
 // ═══════════════════════════════ BRACKET ELIMINATORIA ═══════════════════════════════
@@ -1080,9 +1084,9 @@ function collectData(){
     });
     d.questions={
       golesFavor: document.getElementById('q-gf').value,
-      golesContra: document.getElementById('q-gc').value,
       menosGolesContra: document.getElementById('q-mgc').value,
-      mejor3ro: document.getElementById('q-m3ro').value,
+      golesContra: document.getElementById('q-gc').value,
+      tarjetas: document.getElementById('q-tar').value,
       goleador: document.getElementById('q-gol').value
     };
   } else {
@@ -1295,11 +1299,11 @@ async function loadPred(){
       // Preguntas
       const qs = p.data?.questions || {};
       const extras = [
-        ['Más goles a favor', qs.golesFavor],
+        ['Más goles anotados', qs.golesFavor],
+        ['Menos goles en contra', qs.menosGolesContra],
         ['Más goles en contra', qs.golesContra],
-        ['Más goles del torneo', qs.masGolesCopa],
-        ['Mejor 3er lugar', qs.mejor3ro],
-        ['⚽ Goleador', qs.goleador],
+        ['Más tarjetas amarillas', qs.tarjetas],
+        ['Equipo del goleador', qs.goleador],
       ].filter(([,v])=>v);
 
       const extrasHTML = extras.length ? `<div class="pred-extras">${extras.map(([l,v])=>`
@@ -1332,7 +1336,7 @@ async function loadPred(){
 function calcPremios(){
   const n = participants.filter(p=>p.activo==='ACTIVO').length;
   document.getElementById('p-num').textContent = n;
-  const bolsa = n * 117000;
+  const bolsa = n * 125000 * 0.9;
   document.getElementById('p-bolsa').textContent = '$'+bolsa.toLocaleString('es-CO');
 
   const corte = cfg.corte/100;
