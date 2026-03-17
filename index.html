@@ -450,20 +450,62 @@ input[type=number]{-moz-appearance:textfield;}
 
     <!-- ELIM BRACKET -->
     <div id="ph-elim" style="display:none">
-      <div style="background:rgba(41,128,185,0.08);border:1px solid rgba(41,128,185,0.2);border-radius:9px;padding:13px 16px;margin-bottom:18px;font-size:.83rem;color:var(--text-mid);line-height:1.7">
-        🏆 <strong style="color:var(--text)">Llave de Eliminación Directa.</strong> Predice el marcador de 90 minutos e indica el ganador (clasificado en caso de empate/penales).
+
+      <!-- PASO 1: Verificación de identidad -->
+      <div id="elim-verify" style="max-width:440px;margin:0 auto">
+        <div style="text-align:center;margin-bottom:28px">
+          <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:1.6rem;letter-spacing:2px;color:#fff;text-transform:uppercase">Fase Eliminatoria</div>
+          <div style="color:var(--text-dim);font-size:.88rem;margin-top:6px">Ingresa tus datos para continuar</div>
+        </div>
+        <div class="card" style="padding:24px">
+          <div class="field" style="margin-bottom:16px">
+            <label>WhatsApp (sin espacios ni guiones)</label>
+            <input class="inp" id="elim-wa" type="tel" placeholder="3001234567">
+          </div>
+          <div class="field" style="margin-bottom:24px">
+            <label>Correo electrónico</label>
+            <input class="inp" id="elim-email" type="email" placeholder="tu@correo.com">
+          </div>
+          <div id="elim-verify-msg" style="display:none;padding:10px 14px;border-radius:8px;font-size:.83rem;margin-bottom:16px"></div>
+          <button class="btn btn-gold" style="width:100%" onclick="verificarElim()">
+            Verificar y continuar →
+          </button>
+        </div>
       </div>
 
-      <!-- Tabs móvil -->
-      <div class="bracket-tabs" id="bracket-tabs"></div>
+      <!-- PASO 2: Bracket (oculto hasta verificar) -->
+      <div id="elim-bracket-wrap" style="display:none">
+        <div style="background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);border-radius:9px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.2rem">✅</span>
+          <div>
+            <strong id="elim-nombre-ok" style="color:#fff"></strong>
+            <div style="font-size:.78rem;color:var(--text-dim)">Llena tu llave y envía antes del primer partido de 16avos</div>
+          </div>
+          <button onclick="resetElimVerify()" style="margin-left:auto;background:none;border:none;color:var(--text-dim);font-size:.75rem;cursor:pointer">Cambiar</button>
+        </div>
 
-      <!-- Bracket desktop -->
-      <div class="bracket-wrap">
-        <div class="bracket" id="bracket-desktop"></div>
+        <div style="background:rgba(41,128,185,0.08);border:1px solid rgba(41,128,185,0.2);border-radius:9px;padding:13px 16px;margin-bottom:18px;font-size:.83rem;color:var(--text-mid);line-height:1.7">
+          🏆 <strong style="color:var(--text)">Llave de Eliminación Directa.</strong> Predice el marcador de 90 minutos e indica el ganador. En empate indica quién clasifica.
+        </div>
+
+        <!-- Tabs móvil -->
+        <div class="bracket-tabs" id="bracket-tabs"></div>
+
+        <!-- Bracket desktop -->
+        <div class="bracket-wrap">
+          <div class="bracket" id="bracket-desktop"></div>
+        </div>
+
+        <!-- Bracket móvil -->
+        <div class="bracket-mobile" id="bracket-mobile"></div>
+
+        <!-- Botón enviar -->
+        <div style="margin-top:24px;padding:16px;background:var(--dark3);border:1px solid var(--border2);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="font-size:.83rem;color:var(--text-dim)">Recuerda enviar antes de que empiece la eliminatoria</div>
+          <button class="btn btn-gold" onclick="submitElim()" id="elim-submit-btn">Enviar mi Llave →</button>
+        </div>
+        <div id="elim-submit-msg" style="display:none;margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.85rem;text-align:center"></div>
       </div>
-
-      <!-- Bracket móvil -->
-      <div class="bracket-mobile" id="bracket-mobile"></div>
     </div>
   </div>
 </div>
@@ -775,6 +817,111 @@ function buildGroupsForm(){
 
   const tOpts = '<option value="">-- Selecciona --</option>'+teamOpts;
   ['q-gf','q-gc','q-mgc','q-tar','q-gol'].forEach(id=>{ document.getElementById(id).innerHTML=tOpts; });
+}
+
+// ═══════════════════════════════ ELIMINATORIA — VERIFICACIÓN Y ENVÍO ═══════════════════════════════
+let elimParticipante = null; // {id, nombre, whatsapp, email}
+
+async function verificarElim(){
+  const wa = document.getElementById('elim-wa').value.trim().replace(/\D/g,'');
+  const em = document.getElementById('elim-email').value.trim().toLowerCase();
+  const msg = document.getElementById('elim-verify-msg');
+
+  if(!wa || !em){
+    msg.style.display='block';
+    msg.style.background='rgba(231,76,60,0.1)';
+    msg.style.border='1px solid rgba(231,76,60,0.3)';
+    msg.style.color='var(--red)';
+    msg.textContent='Por favor ingresa tu WhatsApp y correo.';
+    return;
+  }
+
+  msg.style.display='block';
+  msg.style.background='rgba(201,168,76,0.08)';
+  msg.style.border='1px solid rgba(201,168,76,0.2)';
+  msg.style.color='var(--text-dim)';
+  msg.textContent='Verificando...';
+
+  try {
+    const url = GS_URL + '?action=verificarParticipante&whatsapp=' + encodeURIComponent(wa) + '&email=' + encodeURIComponent(em);
+    const d = await jsonpFetch(url);
+    if(d && d.ok){
+      elimParticipante = {id: d.id, nombre: d.nombre, whatsapp: wa, email: em};
+      // Load any existing elim data
+      if(d.elimData && Object.keys(d.elimData).length > 0){
+        bracketPred = d.elimData;
+      }
+      document.getElementById('elim-nombre-ok').textContent = '👋 Hola, ' + d.nombre;
+      document.getElementById('elim-verify').style.display = 'none';
+      document.getElementById('elim-bracket-wrap').style.display = 'block';
+      buildElimForm();
+    } else {
+      msg.style.background='rgba(231,76,60,0.1)';
+      msg.style.border='1px solid rgba(231,76,60,0.3)';
+      msg.style.color='var(--red)';
+      msg.textContent='No encontramos tu registro. Verifica tu WhatsApp y correo exactamente como los registraste en la fase de grupos.';
+    }
+  } catch(e) {
+    msg.style.background='rgba(231,76,60,0.1)';
+    msg.style.border='1px solid rgba(231,76,60,0.3)';
+    msg.style.color='var(--red)';
+    msg.textContent='Error de conexión. Intenta de nuevo.';
+  }
+}
+
+function resetElimVerify(){
+  elimParticipante = null;
+  document.getElementById('elim-verify').style.display = 'block';
+  document.getElementById('elim-bracket-wrap').style.display = 'none';
+  document.getElementById('elim-verify-msg').style.display = 'none';
+}
+
+async function submitElim(){
+  if(!elimParticipante){
+    toast('Primero verifica tu identidad', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('elim-submit-btn');
+  const msg = document.getElementById('elim-submit-msg');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    const payload = {
+      action: 'submitElim',
+      data: {
+        whatsapp: elimParticipante.whatsapp,
+        email: elimParticipante.email,
+        elim: bracketPred
+      }
+    };
+
+    const resp = await fetch(GS_URL, {
+      method: 'POST',
+      body: new URLSearchParams({payload: JSON.stringify(payload)})
+    });
+    const result = await resp.json();
+
+    if(result.ok){
+      msg.style.display = 'block';
+      msg.style.background = 'rgba(39,174,96,0.1)';
+      msg.style.border = '1px solid rgba(39,174,96,0.3)';
+      msg.style.color = '#27AE60';
+      msg.textContent = '✅ ¡Llave enviada! Tus predicciones quedaron guardadas, ' + elimParticipante.nombre + '.';
+      btn.textContent = '✓ Enviado';
+    } else {
+      throw new Error(result.error || 'error');
+    }
+  } catch(e) {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(231,76,60,0.1)';
+    msg.style.border = '1px solid rgba(231,76,60,0.3)';
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Error al enviar. Intenta de nuevo.';
+    btn.disabled = false;
+    btn.textContent = 'Enviar mi Llave →';
+  }
 }
 
 // ═══════════════════════════════ BRACKET ELIMINATORIA ═══════════════════════════════
