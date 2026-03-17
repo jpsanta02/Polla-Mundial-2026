@@ -550,61 +550,47 @@ input[type=number]{-moz-appearance:textfield;}
 
   <div class="card" style="margin-top:20px">
     <div class="card-title">📊 Sistema de Puntos</div>
-    <div class="grid2" style="gap:28px">
+    <div class="grid2" style="gap:32px">
+
+      <!-- COLUMNA IZQUIERDA: GRUPOS -->
       <div>
-        <div style="font-weight:600;color:var(--gold);margin-bottom:10px">Fase de Grupos — Partidos</div>
-        <table style="width:100%;font-size:.82rem;border-collapse:collapse">
-          <tr><td style="color:var(--text-dim);padding:4px 0">Acertar ganador / empate</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">2 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Goles de un equipo exactos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">1 pt c/u</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Marcador exacto (reemplaza anteriores)</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">5 pts</td></tr>
-        </table>
-
-        <div style="font-weight:600;color:var(--gold);margin:14px 0 10px">Fase de Grupos — Posiciones</div>
-        <table style="width:100%;font-size:.82rem;border-collapse:collapse">
-          <tr><td style="color:var(--text-dim);padding:4px 0">Posición exacta de un equipo en su grupo</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">3 pts c/u</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Orden exacto del grupo completo (reemplaza)</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">15 pts</td></tr>
-        </table>
-
-        <div style="font-weight:600;color:var(--gold);margin:14px 0 10px">Preguntas Adicionales <span style="color:var(--text-dim);font-weight:400;font-size:.75rem">— 15 pts c/u</span></div>
-        <table style="width:100%;font-size:.82rem;border-collapse:collapse">
-          <tr><td style="color:var(--text-dim);padding:3px 0">① Equipo con más goles anotados</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">② Equipo con menos goles en contra</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">③ Equipo con más goles en contra</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">④ Equipo con más tarjetas amarillas</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">⑤ Equipo del goleador del torneo</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts</td></tr>
+        <div style="font-weight:700;color:var(--gold);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Fase de Grupos</div>
+        <table style="width:100%;font-size:.83rem;border-collapse:collapse">
+          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Acertar ganador / empate</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right;border-bottom:1px solid var(--border2)">2 pts</td></tr>
+          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Goles de un equipo exactos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right;border-bottom:1px solid var(--border2)">1 pt c/u</td></tr>
+          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Marcador exacto <span style="font-size:.72rem">(reemplaza)</span></td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">5 pts</td></tr>
+          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Posición exacta en grupo</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right;border-bottom:1px solid var(--border2)">3 pts c/u</td></tr>
+          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Orden exacto del grupo <span style="font-size:.72rem">(reemplaza)</span></td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">15 pts</td></tr>
+          <tr><td style="color:var(--text-dim);padding:5px 0">Preguntas adicionales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts c/u</td></tr>
         </table>
       </div>
-      <div>
-        <div style="font-weight:600;color:var(--gold);margin-bottom:10px">Fase Eliminatoria — Clasificado</div>
-        <table style="width:100%;font-size:.82rem;border-collapse:collapse">
-          <tr><td style="color:var(--text-dim);padding:4px 0">16avos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">5 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Octavos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">10 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Cuartos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">20 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Semifinales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">35 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">3er Puesto</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">25 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:4px 0">Campeón</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">60 pts</td></tr>
-        </table>
 
-        <div style="font-weight:600;color:var(--gold);margin:14px 0 6px">Eliminatoria — Bonificaciones</div>
-        <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:10px;line-height:1.7">
-          Solo se dan si aciertas el equipo.<br>
-          El bono de <strong style="color:var(--text)">resultado exacto</strong> equivale a los pts del clasificado (ej. cuartos = +20 pts extra).<br>
-          El bono de <strong style="color:var(--text)">goles de un equipo</strong> se da por cada equipo acertado.
+      <!-- COLUMNA DERECHA: ELIMINATORIA -->
+      <div>
+        <div style="font-weight:700;color:var(--gold);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Fase Eliminatoria</div>
+        <table style="width:100%;font-size:.83rem;border-collapse:collapse">
+          <thead>
+            <tr style="font-size:.72rem">
+              <td style="color:var(--text-dim);padding:4px 0 8px;border-bottom:1px solid var(--border2)">Ronda</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2)">Clasificado</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2)">+Goles/eq.</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:right;padding:4px 0 8px;border-bottom:1px solid var(--border2)">+Exacto</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">16avos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">5</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+2</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+5</td></tr>
+            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Octavos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">10</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+3</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+10</td></tr>
+            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Cuartos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">20</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+5</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+15</td></tr>
+            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Semifinales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
+            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">3er Puesto</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
+            <tr><td style="color:var(--text-dim);padding:5px 0">Final</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:center;font-weight:700">60</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+10</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700">+30</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:.72rem;color:var(--text-dim);margin-top:10px;line-height:1.6">
+          Bonos solo si aciertas el equipo. +Exacto = acertar ambos equipos y marcador.
         </div>
-        <table style="width:100%;font-size:.82rem;border-collapse:collapse">
-          <tr style="font-size:.72rem">
-            <td style="color:var(--text-dim);padding:4px 0;font-weight:600">Ronda</td>
-            <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;font-weight:600">Goles/equipo</td>
-            <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:right;font-weight:600">Exacto</td>
-          </tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">16avos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+2 pts</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">+5 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">Octavos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+3 pts</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">+10 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">Cuartos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+5 pts</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">+20 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">Semifinales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+7 pts</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">+35 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">3er Puesto</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+7 pts</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">+25 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:3px 0">Final</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+10 pts</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:600">+60 pts</td></tr>
-        </table>
       </div>
+
     </div>
   </div>
 </div>
@@ -650,9 +636,9 @@ const ELIM_ROUNDS = [
   {name:"16avos de final", pts:5, dates:"28 jun – 3 jul", n:16},
   {name:"Octavos de final", pts:10, dates:"4–7 jul", n:8},
   {name:"Cuartos de final", pts:20, dates:"9–11 jul", n:4},
-  {name:"Semifinales", pts:35, dates:"14–15 jul", n:2},
+  {name:"Semifinales", pts:30, dates:"14–15 jul", n:2},
   {name:"Final", pts:60, dates:"19 jul", n:1},
-  {name:"Tercer Puesto", pts:25, dates:"18 jul", n:1},
+  {name:"Tercer Puesto", pts:30, dates:"18 jul", n:1},
 ];
 
 const ALL_TEAMS = Object.values(GROUPS).flat();
@@ -956,7 +942,7 @@ function buildBracketDesktop(){
     col('Cuartos · 20pts', 'r4', [0,1]) +
     col('Semis · 35pts', 'r2', [0]) +
     `<div class="bracket-final-col">
-      <div class="bracket-trophy"><span class="trophy-icon">🏆</span><div class="trophy-title">Final · 19 Jul · 60pts</div></div>
+      <div class="bracket-trophy"><span class="trophy-icon">🏆</span><div class="trophy-title">Final · 19 Jul · 60 pts</div></div>
       ${renderBracketMatch('final', 0)}
       <div style="margin-top:10px;padding:8px;background:var(--dark3);border:1px solid var(--border2);border-radius:8px;width:100%">
         <div style="font-size:.62rem;color:var(--text-dim);letter-spacing:1px;text-align:center;margin-bottom:6px">3ER PUESTO · 18 Jul · 25pts</div>
