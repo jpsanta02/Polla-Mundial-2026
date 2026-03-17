@@ -455,13 +455,14 @@ input[type=number]{-moz-appearance:textfield;}
       <div id="elim-verify" style="max-width:440px;margin:0 auto">
         <div style="text-align:center;margin-bottom:28px">
           <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:1.6rem;letter-spacing:2px;color:#fff;text-transform:uppercase">Fase Eliminatoria</div>
-          <div style="color:var(--text-dim);font-size:.88rem;margin-top:6px">Ingresa tus datos para continuar</div>
+          <div style="color:var(--text-dim);font-size:.88rem;margin-top:6px">Ingresa tu número de celular o correo para continuar</div>
         </div>
         <div class="card" style="padding:24px">
           <div class="field" style="margin-bottom:16px">
-            <label>WhatsApp (sin espacios ni guiones)</label>
+            <label>Número de celular</label>
             <input class="inp" id="elim-wa" type="tel" placeholder="3001234567">
           </div>
+          <div style="text-align:center;color:var(--text-dim);font-size:.8rem;margin-bottom:16px">— o —</div>
           <div class="field" style="margin-bottom:24px">
             <label>Correo electrónico</label>
             <input class="inp" id="elim-email" type="email" placeholder="tu@correo.com">
@@ -851,12 +852,12 @@ async function verificarElim(){
   const em = document.getElementById('elim-email').value.trim().toLowerCase();
   const msg = document.getElementById('elim-verify-msg');
 
-  if(!wa || !em){
+  if(!wa && !em){
     msg.style.display='block';
     msg.style.background='rgba(231,76,60,0.1)';
     msg.style.border='1px solid rgba(231,76,60,0.3)';
     msg.style.color='var(--red)';
-    msg.textContent='Por favor ingresa tu WhatsApp y correo.';
+    msg.textContent='Ingresa tu número de celular o correo electrónico.';
     return;
   }
 
@@ -1233,6 +1234,9 @@ function showPhase(){
   const p = document.getElementById('phase-sel').value;
   document.getElementById('ph-grupos').style.display = p==='grupos'?'block':'none';
   document.getElementById('ph-elim').style.display = p==='elim'?'block':'none';
+  // Hide fixed "Enviar mi Polla" bar when on eliminatoria
+  const subBar = document.getElementById('sub-bar');
+  if(subBar) subBar.style.display = p==='elim' ? 'none' : 'block';
   if(p==='elim') loadEliminatoriaTeams();
 }
 
