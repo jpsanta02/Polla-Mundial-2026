@@ -819,6 +819,30 @@ function buildGroupsForm(){
   ['q-gf','q-gc','q-mgc','q-tar','q-gol'].forEach(id=>{ document.getElementById(id).innerHTML=tOpts; });
 }
 
+async function loadEliminatoriaTeams(){
+  try {
+    const d = await jsonpFetch(GS_URL + '?action=getEliminatoria');
+    if(d && d.ok && d.teams){
+      d.teams.forEach(t => {
+        const i = t.id;
+        if(i >= 0 && i < 16){
+          bracketTeams[i] = {
+            t1: t.t1 || t.lbl1,
+            t2: t.t2 || t.lbl2,
+          };
+          // Update bracket def labels too
+          if(t.t1) BRACKET_R16_DEF[i].lbl1 = t.t1;
+          if(t.t2) BRACKET_R16_DEF[i].lbl2 = t.t2;
+          if(t.ciudad) BRACKET_R16_DEF[i].ciudad = t.ciudad;
+          if(t.fecha) BRACKET_R16_DEF[i].fecha = t.fecha;
+        }
+      });
+    }
+  } catch(e){
+    console.log('loadEliminatoriaTeams error:', e);
+  }
+}
+
 // ═══════════════════════════════ ELIMINATORIA — VERIFICACIÓN Y ENVÍO ═══════════════════════════════
 let elimParticipante = null; // {id, nombre, whatsapp, email}
 
@@ -854,6 +878,7 @@ async function verificarElim(){
       document.getElementById('elim-nombre-ok').textContent = '👋 Hola, ' + d.nombre;
       document.getElementById('elim-verify').style.display = 'none';
       document.getElementById('elim-bracket-wrap').style.display = 'block';
+      await loadEliminatoriaTeams();
       buildElimForm();
     } else {
       msg.style.background='rgba(231,76,60,0.1)';
@@ -1208,6 +1233,7 @@ function showPhase(){
   const p = document.getElementById('phase-sel').value;
   document.getElementById('ph-grupos').style.display = p==='grupos'?'block':'none';
   document.getElementById('ph-elim').style.display = p==='elim'?'block':'none';
+  if(p==='elim') loadEliminatoriaTeams();
 }
 
 function updProg(){
