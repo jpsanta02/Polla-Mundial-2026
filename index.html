@@ -169,13 +169,13 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input[type=number]{-moz-appearance:textfield;}
 
 /* ── BRACKET ── */
-.bracket-wrap{overflow-x:auto;padding-bottom:20px;}
-.bracket{display:flex;gap:0;align-items:stretch;min-width:900px;}
-.bracket-col{display:flex;flex-direction:column;justify-content:space-around;min-width:180px;padding:0 6px;}
-.bracket-col-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.7rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;text-align:center;padding:6px 0 10px;border-bottom:1px solid var(--border2);margin-bottom:8px;}
-.bracket-match{background:var(--dark3);border:1px solid var(--border2);border-radius:8px;margin:4px 0;position:relative;transition:border-color .2s;}
-.bracket-match:hover{border-color:rgba(201,168,76,0.3);}
-.bracket-match.locked{opacity:.6;pointer-events:none;}
+.llave-wrap{overflow-x:auto;padding-bottom:20px;}
+.llave{display:flex;gap:0;align-items:stretch;min-width:900px;}
+.llave-col{display:flex;flex-direction:column;justify-content:space-around;min-width:180px;padding:0 6px;}
+.llave-col-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.7rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;text-align:center;padding:6px 0 10px;border-bottom:1px solid var(--border2);margin-bottom:8px;}
+.llave-match{background:var(--dark3);border:1px solid var(--border2);border-radius:8px;margin:4px 0;position:relative;transition:border-color .2s;}
+.llave-match:hover{border-color:rgba(201,168,76,0.3);}
+.llave-match.locked{opacity:.6;pointer-events:none;}
 .bm-team{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--border2);cursor:pointer;}
 .bm-team:last-of-type{border-bottom:none;}
 .bm-team.winner{background:rgba(201,168,76,0.08);}
@@ -185,20 +185,20 @@ input[type=number]{-moz-appearance:textfield;}
 .bm-score{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:4px;width:28px;height:24px;display:flex;align-items:center;justify-content:center;}
 .bm-score input{width:28px;height:24px;background:none;border:none;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.82rem;padding:0;}
 .bm-pts{font-size:.6rem;color:var(--text-dim);text-align:center;padding:3px 0;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;letter-spacing:1px;}
-.bracket-connector{display:flex;flex-direction:column;justify-content:space-around;width:16px;flex-shrink:0;}
-.bracket-final-col{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:200px;gap:12px;}
-.bracket-trophy{text-align:center;padding:12px;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.3);border-radius:12px;}
-.bracket-trophy .trophy-icon{font-size:2rem;display:block;margin-bottom:6px;}
-.bracket-trophy .trophy-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.75rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.llave-connector{display:flex;flex-direction:column;justify-content:space-around;width:16px;flex-shrink:0;}
+.llave-final-col{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:200px;gap:12px;}
+.llave-trophy{text-align:center;padding:12px;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.3);border-radius:12px;}
+.llave-trophy .trophy-icon{font-size:2rem;display:block;margin-bottom:6px;}
+.llave-trophy .trophy-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.75rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
 
-/* Mobile bracket — ronda por ronda */
-.bracket-tabs{display:none;gap:4px;margin-bottom:16px;flex-wrap:wrap;}
-.bracket-tab{padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;font-family:'Noto Sans',sans-serif;transition:all .2s;}
-.bracket-tab.on{background:var(--fifa-red);color:#fff;border-color:var(--fifa-red);}
-.bracket-mobile{display:none;}
-.bracket-mobile-col{display:none;}
-.bracket-mobile-col.on{display:block;}
-.bracket-mobile-match{background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:12px;margin-bottom:10px;}
+/* Mobile llave — ronda por ronda */
+.llave-tabs{display:none;gap:4px;margin-bottom:16px;flex-wrap:wrap;}
+.llave-tab{padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;font-family:'Noto Sans',sans-serif;transition:all .2s;}
+.llave-tab.on{background:var(--fifa-red);color:#fff;border-color:var(--fifa-red);}
+.llave-mobile{display:none;}
+.llave-mobile-col{display:none;}
+.llave-mobile-col.on{display:block;}
+.llave-mobile-match{background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:12px;margin-bottom:10px;}
 .bmm-header{font-size:.65rem;color:var(--gold);letter-spacing:2px;font-family:'DM Mono',monospace;margin-bottom:8px;text-transform:uppercase;}
 .bmm-row{display:flex;align-items:center;gap:8px;padding:6px 0;}
 .bmm-row+.bmm-row{border-top:1px solid var(--border2);}
@@ -207,9 +207,9 @@ input[type=number]{-moz-appearance:textfield;}
 .bmm-score input{width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;padding:0;}
 
 @media(max-width:700px){
-  .bracket-wrap{display:none;}
-  .bracket-tabs{display:flex;}
-  .bracket-mobile{display:block;}
+  .llave-wrap{display:none;}
+  .llave-tabs{display:flex;}
+  .llave-mobile{display:block;}
 }
 
 /* Submit bar */
@@ -374,7 +374,17 @@ input[type=number]{-moz-appearance:textfield;}
         <button class="btn btn-gold" onclick="go('form')">✏ Llenar mi Polla</button>
         <button class="btn btn-out" onclick="go('tabla')">🏅 Ver Tabla</button>
       </div>
-      <div style="margin-top:20px;background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;">
+      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;text-align:center">
+          <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:1.5rem;color:var(--text)" id="st-part">—</div>
+          <div style="font-size:.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase">Inscritos</div>
+        </div>
+        <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;text-align:center">
+          <div style="font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:1.5rem;color:var(--gold)" id="st-bolsa">—</div>
+          <div style="font-size:.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase">Bolsa</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;">
         <div style="font-size:.75rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;font-family:'DM Mono',monospace">CÓMO FUNCIONA</div>
         <div style="font-size:.83rem;color:var(--text-mid);line-height:1.9">
           ① Llena tu polla antes del 11 de junio<br>
@@ -385,7 +395,13 @@ input[type=number]{-moz-appearance:textfield;}
       </div>
     </div>
     <div>
-      <div class="card" style="padding:20px;">
+      <!-- Estadísticas del día (columna derecha) -->
+      <div id="stats-dia-wrap" style="display:none;margin-bottom:16px">
+        <div style="font-size:.72rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-family:'DM Mono',monospace">📊 Estadísticas del día</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="stats-dia-grid"></div>
+      </div>
+      <!-- Grupos (se muestra cuando no hay estadísticas) -->
+      <div class="card" style="padding:20px;" id="home-grupos-card">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:3px;color:var(--text-dim);margin-bottom:12px;">LOS 12 GRUPOS</div>
         <div class="groups-grid" id="home-groups"></div>
       </div>
@@ -394,14 +410,8 @@ input[type=number]{-moz-appearance:textfield;}
   <div class="stats">
     <div class="stat"><div class="stat-n">48</div><div class="stat-l">Selecciones</div></div>
     <div class="stat"><div class="stat-n">104</div><div class="stat-l">Partidos</div></div>
-    <div class="stat"><div class="stat-n" id="st-part">—</div><div class="stat-l">Inscritos</div></div>
-    <div class="stat"><div class="stat-n" id="st-bolsa">—</div><div class="stat-l">Bolsa</div></div>
-  </div>
-
-  <!-- ESTADÍSTICAS DEL DÍA -->
-  <div id="stats-dia-wrap" style="display:none;max-width:1100px;margin:0 auto;padding:0 1.5rem 32px">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:3px;color:var(--text-dim);margin-bottom:12px;">📊 ESTADÍSTICAS DEL DÍA</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px" id="stats-dia-grid"></div>
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Grupos</div></div>
+    <div class="stat"><div class="stat-n">32</div><div class="stat-l">Eliminatoria</div></div>
   </div>
 </div>
 
@@ -482,8 +492,8 @@ input[type=number]{-moz-appearance:textfield;}
         </div>
       </div>
 
-      <!-- PASO 2: Bracket (oculto hasta verificar) -->
-      <div id="elim-bracket-wrap" style="display:none">
+      <!-- PASO 2: Llave (oculto hasta verificar) -->
+      <div id="elim-llave-wrap" style="display:none">
         <div style="background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);border-radius:9px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px">
           <span style="font-size:1.2rem">✅</span>
           <div>
@@ -500,12 +510,12 @@ input[type=number]{-moz-appearance:textfield;}
         <!-- Tabs móvil -->
         <div class="bracket-tabs" id="bracket-tabs"></div>
 
-        <!-- Bracket desktop -->
+        <!-- Llave desktop -->
         <div class="bracket-wrap">
-          <div class="bracket" id="bracket-desktop"></div>
+          <div class="llave" id="bracket-desktop"></div>
         </div>
 
-        <!-- Bracket móvil -->
+        <!-- Llave móvil -->
         <div class="bracket-mobile" id="bracket-mobile"></div>
 
         <!-- Botón enviar -->
@@ -599,51 +609,6 @@ input[type=number]{-moz-appearance:textfield;}
 
   <div class="grid2" id="prizes-grid"></div>
 
-  <div class="card" style="margin-top:20px">
-    <div class="card-title">📊 Sistema de Puntos</div>
-    <div class="grid2" style="gap:32px">
-
-      <!-- COLUMNA IZQUIERDA: GRUPOS -->
-      <div>
-        <div style="font-weight:700;color:var(--gold);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Fase de Grupos</div>
-        <table style="width:100%;font-size:.83rem;border-collapse:collapse">
-          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Acertar ganador / empate</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right;border-bottom:1px solid var(--border2)">2 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Goles de un equipo exactos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right;border-bottom:1px solid var(--border2)">1 pt c/u</td></tr>
-          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Marcador exacto <span style="font-size:.72rem">(reemplaza)</span></td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">5 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Posición exacta en grupo</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right;border-bottom:1px solid var(--border2)">3 pts c/u</td></tr>
-          <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Orden exacto del grupo <span style="font-size:.72rem">(reemplaza)</span></td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">15 pts</td></tr>
-          <tr><td style="color:var(--text-dim);padding:5px 0">Preguntas adicionales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:right">15 pts c/u</td></tr>
-        </table>
-      </div>
-
-      <!-- COLUMNA DERECHA: ELIMINATORIA -->
-      <div>
-        <div style="font-weight:700;color:var(--gold);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Fase Eliminatoria</div>
-        <table style="width:100%;font-size:.83rem;border-collapse:collapse">
-          <thead>
-            <tr style="font-size:.72rem">
-              <td style="color:var(--text-dim);padding:4px 0 8px;border-bottom:1px solid var(--border2)">Ronda</td>
-              <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2)">Clasificado</td>
-              <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2)">+Goles/eq.</td>
-              <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:right;padding:4px 0 8px;border-bottom:1px solid var(--border2)">+Exacto</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">16avos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">5</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+2</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+5</td></tr>
-            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Octavos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">10</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+3</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+10</td></tr>
-            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Cuartos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">20</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+5</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+15</td></tr>
-            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Semifinales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
-            <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">3er Puesto</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
-            <tr><td style="color:var(--text-dim);padding:5px 0">Final</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:center;font-weight:700">60</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+10</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700">+30</td></tr>
-          </tbody>
-        </table>
-        <div style="font-size:.72rem;color:var(--text-dim);margin-top:10px;line-height:1.6">
-          Bonos solo si aciertas el equipo. +Exacto = acertar ambos equipos y marcador.
-        </div>
-      </div>
-
-    </div>
-  </div>
 </div>
 </div>
 
@@ -662,7 +627,7 @@ input[type=number]{-moz-appearance:textfield;}
     <div class="card-title">🗓 Dos Fases</div>
     <div style="font-size:.88rem;color:var(--text-dim);line-height:1.9">
       <strong style="color:var(--gold)">Fase 1 — Grupos</strong> (antes del 11 jun): predice los 72 partidos de grupos, las posiciones finales de los 12 grupos y responde 5 preguntas adicionales.<br><br>
-      <strong style="color:var(--gold)">Fase 2 — Eliminatoria</strong> (antes del 28 jun): llena tu bracket completo con los 32 partidos eliminatorios. Los puntos son acumulativos con la fase de grupos.<br><br>
+      <strong style="color:var(--gold)">Fase 2 — Eliminatoria</strong> (antes del 28 jun): llena tu llave completo con los 32 partidos eliminatorios. Los puntos son acumulativos con la fase de grupos.<br><br>
       Al terminar grupos, el top 50% queda en <strong style="color:var(--gold)">División A</strong> y el resto en <strong style="color:#5B8EFF">División B</strong>. Cada división tiene su propia tabla y premios.
     </div>
   </div>
@@ -685,14 +650,28 @@ input[type=number]{-moz-appearance:textfield;}
 
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">🏆 Puntos — Fase Eliminatoria</div>
-    <div style="font-size:.87rem;color:var(--text-dim);line-height:1.9">
-      Por cada partido predices el marcador (90 min) y el clasificado (en empate, quien pasa por penales).<br><br>
-      <strong style="color:var(--text)">Puntos por clasificado correcto:</strong> 16avos 5 · Octavos 10 · Cuartos 20 · Semis 30 · 3er puesto 30 · Final 60<br><br>
-      <strong style="color:var(--text)">Bono por goles</strong> (solo si aciertas el equipo):<br>
-      16avos +2 · Octavos +3 · Cuartos +5 · Semis +7 · 3er/Final +7/+10 por equipo<br><br>
-      <strong style="color:var(--text)">Bono por resultado exacto</strong> (ambos equipos y marcador correcto):<br>
-      16avos +5 · Octavos +10 · Cuartos +15 · Semis +20 · 3er puesto +20 · Final +30
+    <div style="font-size:.87rem;color:var(--text-dim);line-height:1.8;margin-bottom:14px">
+      Por cada partido predices el marcador (90 min) y el clasificado. En empate indica quién pasa por penales.
     </div>
+    <table style="width:100%;font-size:.83rem;border-collapse:collapse">
+      <thead>
+        <tr style="font-size:.75rem">
+          <td style="color:var(--text-dim);padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">Ronda</td>
+          <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">Clasificado</td>
+          <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">+Goles/eq.</td>
+          <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:right;padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">+Exacto</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">16avos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">5</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+2</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+5</td></tr>
+        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Octavos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">10</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+3</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+10</td></tr>
+        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Cuartos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">20</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+5</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+15</td></tr>
+        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Semifinales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
+        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">3er Puesto</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
+        <tr><td style="color:var(--text-dim);padding:5px 0">Final</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:center;font-weight:700">60</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+10</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700">+30</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:.72rem;color:var(--text-dim);margin-top:10px;line-height:1.6">Bonos solo si aciertas el equipo. +Exacto = acertar ambos equipos y marcador exacto.</div>
   </div>
 
   <div class="card" style="margin-bottom:16px">
@@ -895,48 +874,51 @@ function calcStatsDia(active){
   const cards = [];
 
   if(liderPts > 0){
-    cards.push(`<div class="card" style="padding:14px">
-      <div style="font-size:.65rem;color:var(--gold);letter-spacing:2px;margin-bottom:6px">🥇 LÍDER ACTUAL</div>
-      <div style="font-weight:700;font-size:.95rem">${lider.nombre}</div>
-      <div style="font-family:'DM Mono',monospace;color:var(--gold);font-size:1.2rem;font-weight:700">${liderPts} pts</div>
+    cards.push(`<div class="card" style="padding:12px">
+      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Líder actual</div>
+      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lider.nombre}</div>
+      <div style="font-family:'DM Mono',monospace;color:var(--gold);font-size:1.1rem;font-weight:700">${liderPts} pts</div>
     </div>`);
   }
 
   if(masComun){
-    cards.push(`<div class="card" style="padding:14px">
-      <div style="font-size:.65rem;color:var(--gold);letter-spacing:2px;margin-bottom:6px">📊 MARCADOR MÁS PREDICHO</div>
-      <div style="font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--text)">${masComun[0]}</div>
-      <div style="font-size:.75rem;color:var(--text-dim)">${masComun[1]} persona${masComun[1]>1?'s':''} lo pusieron</div>
-    </div>`);
-  }
-
-  if(menosComun){
-    cards.push(`<div class="card" style="padding:14px">
-      <div style="font-size:.65rem;color:var(--gold);letter-spacing:2px;margin-bottom:6px">🎲 MARCADOR MÁS ORIGINAL</div>
-      <div style="font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--text)">${menosComun[0]}</div>
-      <div style="font-size:.75rem;color:var(--text-dim)">Solo 1 persona lo puso</div>
-    </div>`);
-  }
-
-  if(topGoleador){
-    cards.push(`<div class="card" style="padding:14px">
-      <div style="font-size:.65rem;color:var(--gold);letter-spacing:2px;margin-bottom:6px">⚽ EQUIPO DEL GOLEADOR MÁS PREDICHO</div>
-      <div style="font-weight:700;font-size:.95rem">${topGoleador[0]}</div>
-      <div style="font-size:.75rem;color:var(--text-dim)">${topGoleador[1]} voto${topGoleador[1]>1?'s':''}</div>
+    cards.push(`<div class="card" style="padding:12px">
+      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Marcador más predicho</div>
+      <div style="font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text)">${masComun[0]}</div>
+      <div style="font-size:.72rem;color:var(--text-dim)">${masComun[1]} persona${masComun[1]>1?'s':''}</div>
     </div>`);
   }
 
   if(topCampeon){
-    cards.push(`<div class="card" style="padding:14px">
-      <div style="font-size:.65rem;color:var(--gold);letter-spacing:2px;margin-bottom:6px">🏆 CAMPEÓN MÁS PREDICHO</div>
-      <div style="font-weight:700;font-size:.95rem">${topCampeon[0]}</div>
-      <div style="font-size:.75rem;color:var(--text-dim)">${topCampeon[1]} persona${topCampeon[1]>1?'s':''} lo eligieron</div>
+    cards.push(`<div class="card" style="padding:12px">
+      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Campeón más predicho</div>
+      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${topCampeon[0]}</div>
+      <div style="font-size:.72rem;color:var(--text-dim)">${topCampeon[1]} persona${topCampeon[1]>1?'s':''}</div>
+    </div>`);
+  }
+
+  if(menosComun){
+    cards.push(`<div class="card" style="padding:12px">
+      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Marcador más original</div>
+      <div style="font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text)">${menosComun[0]}</div>
+      <div style="font-size:.72rem;color:var(--text-dim)">Solo 1 persona</div>
+    </div>`);
+  }
+
+  if(topGoleador && cards.length < 4){
+    cards.push(`<div class="card" style="padding:12px">
+      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Equipo del goleador</div>
+      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${topGoleador[0]}</div>
+      <div style="font-size:.72rem;color:var(--text-dim)">${topGoleador[1]} voto${topGoleador[1]>1?'s':''}</div>
     </div>`);
   }
 
   if(cards.length > 0){
-    grid.innerHTML = cards.join('');
+    // Limit to 4 cards, show stats in right column, hide grupos
+    grid.innerHTML = cards.slice(0,4).join('');
     wrap.style.display = 'block';
+    const gruposCard = document.getElementById('home-grupos-card');
+    if(gruposCard) gruposCard.style.display = 'none';
   }
 }
 
@@ -991,11 +973,11 @@ async function loadEliminatoriaTeams(){
       d.teams.forEach(t => {
         const i = t.id;
         if(i >= 0 && i < 16){
-          bracketTeams[i] = {
+          llaveTeams[i] = {
             t1: t.t1 || t.lbl1,
             t2: t.t2 || t.lbl2,
           };
-          // Update bracket def labels too
+          // Update llave def labels too
           if(t.t1) BRACKET_R16_DEF[i].lbl1 = t.t1;
           if(t.t2) BRACKET_R16_DEF[i].lbl2 = t.t2;
           if(t.ciudad) BRACKET_R16_DEF[i].ciudad = t.ciudad;
@@ -1038,11 +1020,11 @@ async function verificarElim(){
       elimParticipante = {id: d.id, nombre: d.nombre, whatsapp: wa, email: em};
       // Load any existing elim data
       if(d.elimData && Object.keys(d.elimData).length > 0){
-        bracketPred = d.elimData;
+        llavePred = d.elimData;
       }
       document.getElementById('elim-nombre-ok').textContent = '👋 Hola, ' + d.nombre;
       document.getElementById('elim-verify').style.display = 'none';
-      document.getElementById('elim-bracket-wrap').style.display = 'block';
+      document.getElementById('elim-llave-wrap').style.display = 'block';
       await loadEliminatoriaTeams();
       buildElimForm();
     } else {
@@ -1062,7 +1044,7 @@ async function verificarElim(){
 function resetElimVerify(){
   elimParticipante = null;
   document.getElementById('elim-verify').style.display = 'block';
-  document.getElementById('elim-bracket-wrap').style.display = 'none';
+  document.getElementById('elim-llave-wrap').style.display = 'none';
   document.getElementById('elim-verify-msg').style.display = 'none';
 }
 
@@ -1083,7 +1065,7 @@ async function submitElim(){
       data: {
         whatsapp: elimParticipante.whatsapp,
         email: elimParticipante.email,
-        elim: bracketPred
+        elim: llavePred
       }
     };
 
@@ -1116,7 +1098,7 @@ async function submitElim(){
 
 // ═══════════════════════════════ BRACKET ELIMINATORIA ═══════════════════════════════
 
-// Bracket oficial FIFA World Cup 2026
+// Llave oficial FIFA World Cup 2026
 // t1/t2 se llenan desde el Sheet. lbl1/lbl2 son las etiquetas oficiales.
 const BRACKET_R16_DEF = [
   // LADO IZQUIERDO (0-7)
@@ -1139,8 +1121,8 @@ const BRACKET_R16_DEF = [
   {id:15, lado:'R', lbl1:'1K',  lbl2:'Mejor 3° E/H/I/J/K',  ciudad:'Kansas',    fecha:'1 jul'},
 ];
 
-// Estado del bracket del participante (se carga/guarda localmente)
-let bracketPred = {
+// Estado del llave del participante (se carga/guarda localmente)
+let llavePred = {
   r16:   Array.from({length:16}, (_,i) => ({g1:'', g2:'', win:''})),
   r8:    Array.from({length:8},  (_,i) => ({g1:'', g2:'', win:''})),
   r4:    Array.from({length:4},  (_,i) => ({g1:'', g2:'', win:''})),
@@ -1150,7 +1132,7 @@ let bracketPred = {
 };
 
 // Equipos reales de 16avos (llenan desde Sheet)
-let bracketTeams = Array.from({length:16}, (_,i) => ({
+let llaveTeams = Array.from({length:16}, (_,i) => ({
   t1: BRACKET_R16_DEF[i].lbl1,
   t2: BRACKET_R16_DEF[i].lbl2,
 }));
@@ -1164,8 +1146,8 @@ let bracketTeams = Array.from({length:16}, (_,i) => ({
 // Final: semi0 vs semi1
 // 3er: perdedor semi0 vs perdedor semi1
 
-function getBracketTeams(rnd, idx){
-  if(rnd === 'r16') return bracketTeams[idx] || {t1:'', t2:''};
+function getLlaveTeams(rnd, idx){
+  if(rnd === 'r16') return llaveTeams[idx] || {t1:'', t2:''};
   const prev = {
     r8:    [ [0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15] ],
     r4:    [ [0,1],[2,3],[4,5],[6,7] ],
@@ -1180,14 +1162,14 @@ function getBracketTeams(rnd, idx){
   const pRnd = prevRnd[rnd];
   const isThird = rnd === 'third';
   const getWin = (r, i) => {
-    const p = bracketPred[r]?.[i];
+    const p = llavePred[r]?.[i];
     if(!p?.win) return null;
     return p.win;
   };
   const getLose = (r, i) => {
-    const p = bracketPred[r]?.[i];
+    const p = llavePred[r]?.[i];
     if(!p?.win) return null;
-    const teams = getBracketTeams(r, i);
+    const teams = getLlaveTeams(r, i);
     return p.win === teams.t1 ? teams.t2 : teams.t1;
   };
   const t1 = isThird ? getLose(pRnd, ia) : getWin(pRnd, ia);
@@ -1200,10 +1182,10 @@ function buildElimForm(){
   buildBracketMobile();
 }
 
-function renderBracketMatch(rnd, idx, mobile=false){
-  const {t1, t2} = getBracketTeams(rnd, idx);
+function renderLlaveMatch(rnd, idx, mobile=false){
+  const {t1, t2} = getLlaveTeams(rnd, idx);
   const tbd = t1==='?' || t2==='?' || !t1 || !t2;
-  const p = bracketPred[rnd]?.[idx] || {};
+  const p = llavePred[rnd]?.[idx] || {};
   const pts = {r16:5, r8:10, r4:20, r2:35, final:60, third:25}[rnd];
   const rndLabel = {r16:'16avos', r8:'Octavos', r4:'Cuartos', r2:'Semis', final:'Final', third:'3er Puesto'}[rnd];
   const def = BRACKET_R16_DEF[idx];
@@ -1218,17 +1200,17 @@ function renderBracketMatch(rnd, idx, mobile=false){
         <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g1" placeholder="0" value="${p.g1||''}"
           ${tbd?'disabled':''}
           style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
-          oninput="onBracketInput('${rnd}',${idx})">
+          oninput="onLlaveInput('${rnd}',${idx})">
       </div>
       <div class="bmm-row">
         <span class="bmm-team${!t2||t2==='?'?' tbd':''}" id="bmt2_${rnd}_${idx}">${t2||'Por definir'}</span>
         <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g2" placeholder="0" value="${p.g2||''}"
           ${tbd?'disabled':''}
           style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
-          oninput="onBracketInput('${rnd}',${idx})">
+          oninput="onLlaveInput('${rnd}',${idx})">
       </div>
       ${!tbd?`<div style="margin-top:8px;font-size:.72rem;color:var(--text-dim)">Ganador / clasifica:</div>
-      <select id="bm_${rnd}_${idx}_win" style="width:100%;margin-top:4px;background:var(--dark4);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--text);font-size:.8rem;outline:none;" onchange="onBracketWin('${rnd}',${idx})">
+      <select id="bm_${rnd}_${idx}_win" style="width:100%;margin-top:4px;background:var(--dark4);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--text);font-size:.8rem;outline:none;" onchange="onLlaveWin('${rnd}',${idx})">
         <option value="">-- Selecciona ganador --</option>
         <option value="${t1}" ${p.win===t1?'selected':''}>${t1}</option>
         <option value="${t2}" ${p.win===t2?'selected':''}>${t2}</option>
@@ -1242,18 +1224,18 @@ function renderBracketMatch(rnd, idx, mobile=false){
       <span class="bm-name${!t1||t1==='?'?' tbd':''}" id="bkt1_${rnd}_${idx}">${t1||'Por definir'}</span>
       <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g1"
         placeholder="0" value="${p.g1||''}" ${tbd?'disabled':''}
-        oninput="onBracketInput('${rnd}',${idx})"></div>
+        oninput="onLlaveInput('${rnd}',${idx})"></div>
     </div>
     <div class="bm-team${p.win===t2?' winner':''}">
       <span class="bm-name${!t2||t2==='?'?' tbd':''}" id="bkt2_${rnd}_${idx}">${t2||'Por definir'}</span>
       <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g2"
         placeholder="0" value="${p.g2||''}" ${tbd?'disabled':''}
-        oninput="onBracketInput('${rnd}',${idx})"></div>
+        oninput="onLlaveInput('${rnd}',${idx})"></div>
     </div>
     <div class="bm-pts">
       ${!tbd?`<select id="bk_${rnd}_${idx}_win"
         style="background:var(--dark4);border:none;color:var(--gold);font-size:.65rem;font-family:'DM Mono',monospace;width:100%;padding:2px 4px;outline:none;cursor:pointer;"
-        onchange="onBracketWin('${rnd}',${idx})">
+        onchange="onLlaveWin('${rnd}',${idx})">
         <option value="">ganador</option>
         <option value="${t1}" ${p.win===t1?'selected':''}>${t1}</option>
         <option value="${t2}" ${p.win===t2?'selected':''}>${t2}</option>
@@ -1270,7 +1252,7 @@ function buildBracketDesktop(){
   const col = (title, rnd, idxs) =>
     `<div class="bracket-col">
       <div class="bracket-col-title">${title}</div>
-      ${idxs.map(i => renderBracketMatch(rnd, i)).join('')}
+      ${idxs.map(i => renderLlaveMatch(rnd, i)).join('')}
     </div>`;
 
   el.innerHTML =
@@ -1280,10 +1262,10 @@ function buildBracketDesktop(){
     col('Semis · 35pts', 'r2', [0]) +
     `<div class="bracket-final-col">
       <div class="bracket-trophy"><span class="trophy-icon">🏆</span><div class="trophy-title">Final · 19 Jul · 60 pts</div></div>
-      ${renderBracketMatch('final', 0)}
+      ${renderLlaveMatch('final', 0)}
       <div style="margin-top:10px;padding:8px;background:var(--dark3);border:1px solid var(--border2);border-radius:8px;width:100%">
         <div style="font-size:.62rem;color:var(--text-dim);letter-spacing:1px;text-align:center;margin-bottom:6px">3ER PUESTO · 18 Jul · 25pts</div>
-        ${renderBracketMatch('third', 0)}
+        ${renderLlaveMatch('third', 0)}
       </div>
     </div>` +
     col('Semis · 35pts', 'r2', [1]) +
@@ -1312,19 +1294,19 @@ function buildBracketMobile(){
 
   mobileEl.innerHTML = rounds.map((r,i) =>
     `<div class="bracket-mobile-col${i===0?' on':''}" id="bmc_${r.key}">
-      ${Array.from({length:r.n},(_,idx) => renderBracketMatch(r.key, idx, true)).join('')}
+      ${Array.from({length:r.n},(_,idx) => renderLlaveMatch(r.key, idx, true)).join('')}
     </div>`
   ).join('');
 }
 
 function switchBracketTab(key, btn){
-  document.querySelectorAll('.bracket-tab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.bracket-mobile-col').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.llave-tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.llave-mobile-col').forEach(c=>c.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('bmc_'+key)?.classList.add('on');
 }
 
-function onBracketInput(rnd, idx){
+function onLlaveInput(rnd, idx){
   const g1k = `bk_${rnd}_${idx}_g1`, g2k = `bk_${rnd}_${idx}_g2`;
   const g1m = `bm_${rnd}_${idx}_g1`, g2m = `bm_${rnd}_${idx}_g2`;
   const g1 = parseInt(document.getElementById(g1k)?.value ?? document.getElementById(g1m)?.value ?? '');
@@ -1335,36 +1317,36 @@ function onBracketInput(rnd, idx){
   if(document.getElementById(g1m)) document.getElementById(g1m).value = document.getElementById(g1k)?.value || document.getElementById(g1m)?.value || '';
 
   if(!isNaN(g1) && !isNaN(g2)){
-    bracketPred[rnd][idx].g1 = g1;
-    bracketPred[rnd][idx].g2 = g2;
+    llavePred[rnd][idx].g1 = g1;
+    llavePred[rnd][idx].g2 = g2;
     // Auto-select winner if scores differ
     if(g1 !== g2){
-      const {t1, t2} = getBracketTeams(rnd, idx);
+      const {t1, t2} = getLlaveTeams(rnd, idx);
       const win = g1 > g2 ? t1 : t2;
-      bracketPred[rnd][idx].win = win;
+      llavePred[rnd][idx].win = win;
       ['bk','bm'].forEach(pre => {
         const sel = document.getElementById(`${pre}_${rnd}_${idx}_win`);
         if(sel) sel.value = win;
       });
-      propagateBracket(rnd, idx);
+      propagateLlave(rnd, idx);
     }
   }
 }
 
-function onBracketWin(rnd, idx){
+function onLlaveWin(rnd, idx){
   // Read winner from whichever selector changed
   const win = document.getElementById(`bk_${rnd}_${idx}_win`)?.value ||
               document.getElementById(`bm_${rnd}_${idx}_win`)?.value || '';
-  bracketPred[rnd][idx].win = win;
+  llavePred[rnd][idx].win = win;
   // Sync both selectors
   ['bk','bm'].forEach(pre => {
     const sel = document.getElementById(`${pre}_${rnd}_${idx}_win`);
     if(sel && sel.value !== win) sel.value = win;
   });
-  propagateBracket(rnd, idx);
+  propagateLlave(rnd, idx);
 }
 
-function propagateBracket(rnd, idx){
+function propagateLlave(rnd, idx){
   // Find next round and position
   const next = {r16:'r8', r8:'r4', r4:'r2', r2:'final'};
   const nextRnd = next[rnd];
@@ -1374,23 +1356,23 @@ function propagateBracket(rnd, idx){
   const nextIdx = Math.floor(idx / 2);
 
   // Re-render the affected next round match
-  refreshBracketMatch(nextRnd, nextIdx);
+  refreshLlaveMatch(nextRnd, nextIdx);
 
   // Also refresh third place if r2 changed
-  if(rnd === 'r2') refreshBracketMatch('third', 0);
+  if(rnd === 'r2') refreshLlaveMatch('third', 0);
 }
 
-function refreshBracketMatch(rnd, idx){
+function refreshLlaveMatch(rnd, idx){
   // Re-render desktop
   const dkEl = document.getElementById(`bkm_${rnd}_${idx}`);
-  if(dkEl) dkEl.outerHTML = renderBracketMatch(rnd, idx, false);
+  if(dkEl) dkEl.outerHTML = renderLlaveMatch(rnd, idx, false);
 
   // Re-render mobile
   const mbEl = document.getElementById(`bmm_${rnd}_${idx}`);
-  if(mbEl) mbEl.outerHTML = renderBracketMatch(rnd, idx, true);
+  if(mbEl) mbEl.outerHTML = renderLlaveMatch(rnd, idx, true);
 
   // Propagate further if this round also has a winner
-  if(bracketPred[rnd]?.[idx]?.win) propagateBracket(rnd, idx);
+  if(llavePred[rnd]?.[idx]?.win) propagateLlave(rnd, idx);
 }
 
 function togGrp(g){ document.getElementById('blk-'+g).classList.toggle('open'); }
