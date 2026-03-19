@@ -505,7 +505,7 @@ input[type=number]{-moz-appearance:textfield;}
 
         <!-- Llave desktop -->
         <div class="bracket-wrap">
-          <div class="llave" id="bracket-desktop"></div>
+          <div class="bracket" id="bracket-desktop"></div>
         </div>
 
         <!-- Llave móvil -->
@@ -964,7 +964,7 @@ async function loadEliminatoriaTeams(){
       d.teams.forEach(t => {
         const i = t.id;
         if(i >= 0 && i < 16){
-          bracketTeams[i] = {
+          llaveTeams[i] = {
             t1: t.t1 || t.lbl1,
             t2: t.t2 || t.lbl2,
           };
@@ -1305,8 +1305,8 @@ function buildBracketMobile(){
 }
 
 function switchBracketTab(key, btn){
-  document.querySelectorAll('.llave-tab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.llave-mobile-col').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.bracket-tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.bracket-mobile-col').forEach(c=>c.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('bmc_'+key)?.classList.add('on');
 }
