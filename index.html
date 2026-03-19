@@ -169,36 +169,35 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input[type=number]{-moz-appearance:textfield;}
 
 /* ── BRACKET ── */
-.llave-wrap{overflow-x:auto;padding-bottom:20px;}
-.llave{display:flex;gap:0;align-items:stretch;min-width:900px;}
-.llave-col{display:flex;flex-direction:column;justify-content:space-around;min-width:180px;padding:0 6px;}
-.llave-col-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.7rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;text-align:center;padding:6px 0 10px;border-bottom:1px solid var(--border2);margin-bottom:8px;}
-.llave-match{background:var(--dark3);border:1px solid var(--border2);border-radius:8px;margin:4px 0;position:relative;transition:border-color .2s;}
-.llave-match:hover{border-color:rgba(201,168,76,0.3);}
-.llave-match.locked{opacity:.6;pointer-events:none;}
-.bm-team{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--border2);cursor:pointer;}
+.bracket-wrap{overflow-x:auto;padding-bottom:20px;}
+.bracket{display:flex;gap:0;align-items:stretch;min-width:900px;}
+.bracket-col{display:flex;flex-direction:column;justify-content:space-around;min-width:175px;padding:0 5px;}
+.bracket-col-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.68rem;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;text-align:center;padding:6px 0 8px;border-bottom:1px solid var(--border2);margin-bottom:6px;}
+.bracket-match{background:var(--dark3);border:1px solid var(--border2);border-radius:8px;margin:3px 0;position:relative;transition:border-color .2s;}
+.bracket-match:hover{border-color:rgba(201,168,76,0.3);}
+.bracket-match.locked{opacity:.5;pointer-events:none;}
+.bm-team{display:flex;align-items:center;gap:5px;padding:6px 8px;border-bottom:1px solid var(--border2);}
 .bm-team:last-of-type{border-bottom:none;}
 .bm-team.winner{background:rgba(201,168,76,0.08);}
 .bm-team.winner .bm-name{color:var(--gold);font-weight:700;}
-.bm-name{font-size:.78rem;flex:1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bm-name{font-size:.75rem;flex:1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .bm-name.tbd{color:var(--text-dim);font-style:italic;}
-.bm-score{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:4px;width:28px;height:24px;display:flex;align-items:center;justify-content:center;}
-.bm-score input{width:28px;height:24px;background:none;border:none;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.82rem;padding:0;}
-.bm-pts{font-size:.6rem;color:var(--text-dim);text-align:center;padding:3px 0;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;letter-spacing:1px;}
-.llave-connector{display:flex;flex-direction:column;justify-content:space-around;width:16px;flex-shrink:0;}
-.llave-final-col{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:200px;gap:12px;}
-.llave-trophy{text-align:center;padding:12px;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.3);border-radius:12px;}
-.llave-trophy .trophy-icon{font-size:2rem;display:block;margin-bottom:6px;}
-.llave-trophy .trophy-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.75rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.bm-score{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:4px;width:26px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bm-score input{width:26px;height:22px;background:none;border:none;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.8rem;padding:0;}
+.bm-pts{font-size:.58rem;color:var(--text-dim);text-align:center;padding:2px 0;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;letter-spacing:1px;}
+.bracket-final-col{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:190px;gap:10px;padding:0 5px;}
+.bracket-trophy{text-align:center;padding:10px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;width:100%;}
+.bracket-trophy .trophy-icon{font-size:1.8rem;display:block;margin-bottom:4px;}
+.bracket-trophy .trophy-title{font-family:'Noto Sans Condensed',sans-serif;font-weight:900;font-size:.68rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
 
-/* Mobile llave — ronda por ronda */
-.llave-tabs{display:none;gap:4px;margin-bottom:16px;flex-wrap:wrap;}
-.llave-tab{padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;font-family:'Noto Sans',sans-serif;transition:all .2s;}
-.llave-tab.on{background:var(--fifa-red);color:#fff;border-color:var(--fifa-red);}
-.llave-mobile{display:none;}
-.llave-mobile-col{display:none;}
-.llave-mobile-col.on{display:block;}
-.llave-mobile-match{background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:12px;margin-bottom:10px;}
+/* Mobile bracket */
+.bracket-tabs{display:none;gap:4px;margin-bottom:16px;flex-wrap:wrap;}
+.bracket-tab{padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;font-family:'Noto Sans',sans-serif;transition:all .2s;}
+.bracket-tab.on{background:var(--fifa-red);color:#fff;border-color:var(--fifa-red);}
+.bracket-mobile{display:none;}
+.bracket-mobile-col{display:none;}
+.bracket-mobile-col.on{display:block;}
+.bracket-mobile-match{background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:12px;margin-bottom:10px;}
 .bmm-header{font-size:.65rem;color:var(--gold);letter-spacing:2px;font-family:'DM Mono',monospace;margin-bottom:8px;text-transform:uppercase;}
 .bmm-row{display:flex;align-items:center;gap:8px;padding:6px 0;}
 .bmm-row+.bmm-row{border-top:1px solid var(--border2);}
@@ -207,9 +206,9 @@ input[type=number]{-moz-appearance:textfield;}
 .bmm-score input{width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;padding:0;}
 
 @media(max-width:700px){
-  .llave-wrap{display:none;}
-  .llave-tabs{display:flex;}
-  .llave-mobile{display:block;}
+  .bracket-wrap{display:none;}
+  .bracket-tabs{display:flex;}
+  .bracket-mobile{display:block;}
 }
 
 /* Submit bar */
@@ -607,7 +606,7 @@ input[type=number]{-moz-appearance:textfield;}
     </div>
   </div>
 
-  <div class="grid2" id="prizes-grid"></div>
+  <div id="prizes-grid"></div>
 
 </div>
 </div>
@@ -650,28 +649,20 @@ input[type=number]{-moz-appearance:textfield;}
 
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">🏆 Puntos — Fase Eliminatoria</div>
-    <div style="font-size:.87rem;color:var(--text-dim);line-height:1.8;margin-bottom:14px">
-      Por cada partido predices el marcador (90 min) y el clasificado. En empate indica quién pasa por penales.
+    <div style="font-size:.88rem;color:var(--text-dim);line-height:1.9">
+      Por cada partido predices el marcador de 90 minutos e indicas el clasificado. En empate indica quién pasa por penales.<br><br>
+      <strong style="color:var(--text)">Puntos por clasificado correcto:</strong><br>
+      · 16avos → <strong style="color:var(--gold)">5 pts</strong><br>
+      · Octavos → <strong style="color:var(--gold)">10 pts</strong><br>
+      · Cuartos → <strong style="color:var(--gold)">20 pts</strong><br>
+      · Semifinales → <strong style="color:var(--gold)">30 pts</strong><br>
+      · 3er Puesto → <strong style="color:var(--gold)">30 pts</strong><br>
+      · Final (Campeón) → <strong style="color:var(--gold)">60 pts</strong><br><br>
+      <strong style="color:var(--text)">Bono por goles exactos</strong> (solo si aciertas el equipo):<br>
+      · 16avos <strong style="color:var(--gold)">+2 pts</strong> · Octavos <strong style="color:var(--gold)">+3 pts</strong> · Cuartos <strong style="color:var(--gold)">+5 pts</strong> · Semis/3er <strong style="color:var(--gold)">+7 pts</strong> · Final <strong style="color:var(--gold)">+10 pts</strong> por equipo<br><br>
+      <strong style="color:var(--text)">Bono por resultado exacto</strong> (ambos equipos + marcador, reemplaza el bono de goles):<br>
+      · 16avos <strong style="color:var(--gold)">+5 pts</strong> · Octavos <strong style="color:var(--gold)">+10 pts</strong> · Cuartos <strong style="color:var(--gold)">+15 pts</strong> · Semis/3er <strong style="color:var(--gold)">+20 pts</strong> · Final <strong style="color:var(--gold)">+30 pts</strong>
     </div>
-    <table style="width:100%;font-size:.83rem;border-collapse:collapse">
-      <thead>
-        <tr style="font-size:.75rem">
-          <td style="color:var(--text-dim);padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">Ronda</td>
-          <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">Clasificado</td>
-          <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:center;padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">+Goles/eq.</td>
-          <td style="font-family:'DM Mono',monospace;color:var(--text-dim);text-align:right;padding:4px 0 8px;border-bottom:1px solid var(--border2);font-weight:600">+Exacto</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">16avos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">5</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+2</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+5</td></tr>
-        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Octavos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">10</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+3</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+10</td></tr>
-        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Cuartos</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">20</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+5</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+15</td></tr>
-        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">Semifinales</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
-        <tr><td style="color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--border2)">3er Puesto</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">30</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center;border-bottom:1px solid var(--border2)">+7</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700;border-bottom:1px solid var(--border2)">+20</td></tr>
-        <tr><td style="color:var(--text-dim);padding:5px 0">Final</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:center;font-weight:700">60</td><td style="font-family:'DM Mono',monospace;color:var(--text);text-align:center">+10</td><td style="font-family:'DM Mono',monospace;color:var(--gold);text-align:right;font-weight:700">+30</td></tr>
-      </tbody>
-    </table>
-    <div style="font-size:.72rem;color:var(--text-dim);margin-top:10px;line-height:1.6">Bonos solo si aciertas el equipo. +Exacto = acertar ambos equipos y marcador exacto.</div>
   </div>
 
   <div class="card" style="margin-bottom:16px">
@@ -973,15 +964,29 @@ async function loadEliminatoriaTeams(){
       d.teams.forEach(t => {
         const i = t.id;
         if(i >= 0 && i < 16){
-          llaveTeams[i] = {
+          bracketTeams[i] = {
             t1: t.t1 || t.lbl1,
             t2: t.t2 || t.lbl2,
           };
-          // Update llave def labels too
           if(t.t1) BRACKET_R16_DEF[i].lbl1 = t.t1;
           if(t.t2) BRACKET_R16_DEF[i].lbl2 = t.t2;
           if(t.ciudad) BRACKET_R16_DEF[i].ciudad = t.ciudad;
-          if(t.fecha) BRACKET_R16_DEF[i].fecha = t.fecha;
+          // Clean fecha — remove JS Date string garbage, keep only "28 jun" format
+          if(t.fecha){
+            const f = String(t.fecha);
+            // If it looks like a JS Date string, extract day/month
+            const match = f.match(/(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
+            const esMatch = f.match(/(\d{1,2})\s+(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)/i);
+            if(match) {
+              const months = {jan:'ene',feb:'feb',mar:'mar',apr:'abr',may:'may',jun:'jun',jul:'jul',aug:'ago',sep:'sep',oct:'oct',nov:'nov',dec:'dic'};
+              BRACKET_R16_DEF[i].fecha = match[1]+' '+months[match[2].toLowerCase()];
+            } else if(esMatch) {
+              BRACKET_R16_DEF[i].fecha = esMatch[0];
+            } else if(f.length < 15) {
+              BRACKET_R16_DEF[i].fecha = f; // already clean
+            }
+            // else: keep original from BRACKET_R16_DEF (don't update)
+          }
         }
       });
     }
