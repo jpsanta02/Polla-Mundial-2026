@@ -589,7 +589,7 @@ input[type=number]{-moz-appearance:textfield;}
 <div class="pg" id="pg-premios">
 <div class="wrap">
   <div class="page-title">Premios 💰</div>
-  <div class="page-sub" style="margin-bottom:28px">30% todos contra todos · 40% División A · 20% División B. Empates: se suman los premios y se dividen.</div>
+  <div class="page-sub" style="margin-bottom:28px">35% todos contra todos · 38% División A · 17% División B. Empates: se suman los premios y se dividen.</div>
 
   <div style="display:flex;gap:20px;margin-bottom:28px;flex-wrap:wrap;align-items:center">
     <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:10px;padding:14px 20px">
@@ -669,9 +669,9 @@ input[type=number]{-moz-appearance:textfield;}
     <div class="card-title">🏅 Premios</div>
     <div style="font-size:.87rem;color:var(--text-dim);line-height:1.9">
       La bolsa se distribuye así:<br><br>
-      · <strong style="color:var(--text)">30%</strong> — Todos contra todos (fase de grupos)<br>
-      · <strong style="color:var(--gold)">40%</strong> — División A (puntaje total grupos + eliminatoria)<br>
-      · <strong style="color:#5B8EFF">20%</strong> — División B (puntaje total grupos + eliminatoria)<br><br>
+      · <strong style="color:var(--text)">35%</strong> — Todos contra todos (fase de grupos)<br>
+      · <strong style="color:var(--gold)">40%</strong> — División A (eliminatoria)<br>
+      · <strong style="color:#5B8EFF">17%</strong> — División B (eliminatoria)<br><br>
       Dentro de cada categoría: <strong style="color:var(--text)">50%</strong> al 1°, <strong style="color:var(--text)">30%</strong> al 2°, <strong style="color:var(--text)">20%</strong> al 3°<br><br>
       En caso de empate en puntos, los premios del puesto se suman y se dividen entre los empatados.
     </div>
@@ -1514,7 +1514,13 @@ async function loadTabla(){
 function renderTabla(){
   const active = participants.filter(p=>p.nombre&&p.activo==='ACTIVO');
   let data = tablaDiv==='all' ? active : active.filter(p=>p.division===tablaDiv);
-  data = [...data].sort((a,b)=>((b.ptsGrupos||0)+(b.ptsElim||0))-((a.ptsGrupos||0)+(a.ptsElim||0)));
+
+  // En divisiones A/B: ordenar y mostrar solo pts de eliminatoria (desde 0)
+  // En todos: ordenar y mostrar pts de grupos
+  const enElim = tablaDiv !== 'all' && cfg.eliminatoria_abierta;
+  const getPts = p => enElim ? (p.ptsElim||0) : (p.ptsGrupos||0);
+
+  data = [...data].sort((a,b) => getPts(b) - getPts(a));
 
   // Podium
   const pod = document.getElementById('podium');
@@ -1525,32 +1531,34 @@ function renderTabla(){
     const cls = data.length>=3?['p2','p1','p3']:['p1','',''];
     pod.innerHTML = order.map((p,i)=>{
       const oi=data.indexOf(p);
-      const tot=(p.ptsGrupos||0)+(p.ptsElim||0);
+      const pts=getPts(p);
       return `<div class="pod-card ${cls[i]}">
         <div class="pod-rank">${medals[oi]||''} ${oi+1}°</div>
         <div class="pod-name">${p.nombre}</div>
-        <div class="pod-pts">${tot} <span style="font-size:.7rem;color:var(--text-dim)">pts</span></div>
+        <div class="pod-pts">${pts} <span style="font-size:.7rem;color:var(--text-dim)">pts</span></div>
         ${cfg.divisiones_visibles && p.division?`<div class="pod-div"><span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}">Div. ${p.division}</span></div>`:''}
       </div>`;
     }).join('');
   }
 
-  const maxP = data[0]?(data[0].ptsGrupos||0)+(data[0].ptsElim||0):1;
+  const maxP = data[0] ? getPts(data[0]) : 1;
   const tbody = document.getElementById('tabla-body');
   if(data.length===0){
     tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-dim)">Aún no hay participantes activos</td></tr>';
     return;
   }
   tbody.innerHTML = data.map((p,i)=>{
-    const tot=(p.ptsGrupos||0)+(p.ptsElim||0);
-    const pct=maxP>0?tot/maxP*100:0;
+    const pts = getPts(p);
+    const pct = maxP>0 ? pts/maxP*100 : 0;
+    const ptsLabel = enElim
+      ? `<td><span class="r-pts">—</span></td><td><span class="r-pts">${p.ptsElim||0}</span></td>`
+      : `<td><span class="r-pts">${p.ptsGrupos||0}</span></td><td><span class="r-pts">${p.ptsElim||0}</span></td>`;
     return `<tr>
       <td><span class="r-num">${i+1}</span></td>
       <td><div style="font-weight:500">${p.nombre}</div></td>
       <td>${cfg.divisiones_visibles && p.division?`<span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}">Div. ${p.division}</span>`:'<span class="tag tag-dim">—</span>'}</td>
-      <td><span class="r-pts">${p.ptsGrupos||0}</span></td>
-      <td><span class="r-pts">${p.ptsElim||0}</span></td>
-      <td><span class="r-pts" style="font-size:1rem">${tot}</span></td>
+      ${ptsLabel}
+      <td><span class="r-pts" style="font-size:1rem">${pts}</span></td>
       <td class="bar-wrap"><div class="bar" style="width:${pct}%"></div></td>
     </tr>`;
   }).join('');
@@ -1761,12 +1769,12 @@ function calcPremios(){
   const corte = cfg.corte/100;
   const nA = Math.ceil(n*corte), nB = n-nA;
 
-  const pTodos = bolsa*0.30;
-  const pA = bolsa*0.40;
-  const pB = bolsa*0.20;
+  const pTodos = bolsa*0.35;
+  const pA = bolsa*0.38;
+  const pB = bolsa*0.17;
 
   const cats = [
-    {name:'Todos contra todos', sub:'Fase de Grupos · top 3', n:n, total:pTodos, color:'var(--text)', pcts:[0.5,0.3,0.2]},
+    {name:'Todos contra todos', sub:'Fase de Grupos · 35%', n:n, total:pTodos, color:'var(--text)', pcts:[0.5,0.3,0.2]},
     {name:'División A', sub:`Top ${Math.round(corte*100)}% · ${nA} participantes`, n:nA, total:pA, color:'var(--gold)', pcts:[0.5,0.3,0.2]},
     {name:'División B', sub:`Resto · ${nB} participantes`, n:nB, total:pB, color:'#5B8EFF', pcts:[0.5,0.3,0.2]},
   ];
@@ -1789,7 +1797,7 @@ function calcPremios(){
     </div>
     <div class="card" style="margin-bottom:4px">
       <div style="font-size:.75rem;color:var(--text-dim);line-height:1.8">
-        Distribución: 30% todos contra todos · 40% División A · 20% División B<br>
+        Distribución: 35% todos contra todos · 38% División A · 17% División B<br>
         Dentro de cada categoría: 50% al 1°, 30% al 2°, 20% al 3°
       </div>
     </div>`;
