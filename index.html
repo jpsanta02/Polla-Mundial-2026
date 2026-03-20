@@ -1074,13 +1074,9 @@ async function submitElim(){
       }
     };
 
-    const resp = await fetch(GS_URL, {
-      method: 'POST',
-      body: new URLSearchParams({payload: JSON.stringify(payload)})
-    });
-    const result = await resp.json();
+    const result = await jsonpFetch(GS_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)));
 
-    if(result.ok){
+    if(result && result.ok){
       msg.style.display = 'block';
       msg.style.background = 'rgba(39,174,96,0.1)';
       msg.style.border = '1px solid rgba(39,174,96,0.3)';
