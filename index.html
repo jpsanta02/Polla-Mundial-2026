@@ -1065,36 +1065,47 @@ async function submitElim(){
   btn.textContent = 'Enviando...';
 
   try {
-    const payload = {
+    const payload = JSON.stringify({
       action: 'submitElim',
       data: {
         whatsapp: elimParticipante.whatsapp,
         email: elimParticipante.email,
         elim: llavePred
       }
-    };
+    });
 
-    const result = await jsonpFetch(GS_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)));
+    // Use iframe form (same as submitForm) to bypass CORS
+    const iframe = document.createElement('iframe');
+    iframe.name = 'elim_iframe_' + Date.now();
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
 
-    if(result && result.ok){
-      msg.style.display = 'block';
-      msg.style.background = 'rgba(39,174,96,0.1)';
-      msg.style.border = '1px solid rgba(39,174,96,0.3)';
-      msg.style.color = '#27AE60';
-      msg.textContent = '✅ ¡Llave enviada! Tus predicciones quedaron guardadas, ' + elimParticipante.nombre + '.';
-      btn.textContent = '✓ Enviado';
-    } else {
-      throw new Error(result.error || 'error');
-    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = GS_URL;
+    form.target = iframe.name;
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = payload;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => { form.remove(); iframe.remove(); }, 3000);
   } catch(e) {
-    msg.style.display = 'block';
-    msg.style.background = 'rgba(231,76,60,0.1)';
-    msg.style.border = '1px solid rgba(231,76,60,0.3)';
-    msg.style.color = 'var(--red)';
-    msg.textContent = 'Error al enviar. Intenta de nuevo.';
-    btn.disabled = false;
-    btn.textContent = 'Enviar mi Llave →';
+    console.log('submitElim error', e);
   }
+
+  // Show success immediately (fire and forget)
+  msg.style.display = 'block';
+  msg.style.background = 'rgba(39,174,96,0.1)';
+  msg.style.border = '1px solid rgba(39,174,96,0.3)';
+  msg.style.color = '#27AE60';
+  msg.textContent = '✅ ¡Llave enviada, ' + elimParticipante.nombre + '! El organizador la verá en el Sheet.';
+  btn.textContent = '✓ Enviado';
 }
 
 // ═══════════════════════════════ BRACKET ELIMINATORIA ═══════════════════════════════
@@ -1198,14 +1209,14 @@ function renderLlaveMatch(rnd, idx, mobile=false){
       </div>
       <div class="bmm-row">
         <span class="bmm-team${!t1||t1==='?'?' tbd':''}" id="bmt1_${rnd}_${idx}">${t1||'Por definir'}</span>
-        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g1" placeholder="0" value="${p.g1||''}"
+        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g1" placeholder="-" value="${p.g1||''}"
           ${tbd?'disabled':''}
           style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
           oninput="onLlaveInput('${rnd}',${idx})">
       </div>
       <div class="bmm-row">
         <span class="bmm-team${!t2||t2==='?'?' tbd':''}" id="bmt2_${rnd}_${idx}">${t2||'Por definir'}</span>
-        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g2" placeholder="0" value="${p.g2||''}"
+        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g2" placeholder="-" value="${p.g2||''}"
           ${tbd?'disabled':''}
           style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
           oninput="onLlaveInput('${rnd}',${idx})">
@@ -1224,13 +1235,13 @@ function renderLlaveMatch(rnd, idx, mobile=false){
     <div class="bm-team${p.win===t1?' winner':''}">
       <span class="bm-name${!t1||t1==='?'?' tbd':''}" id="bkt1_${rnd}_${idx}">${t1||'Por definir'}</span>
       <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g1"
-        placeholder="0" value="${p.g1||''}" ${tbd?'disabled':''}
+        placeholder="-" value="${p.g1||''}" ${tbd?'disabled':''}
         oninput="onLlaveInput('${rnd}',${idx})"></div>
     </div>
     <div class="bm-team${p.win===t2?' winner':''}">
       <span class="bm-name${!t2||t2==='?'?' tbd':''}" id="bkt2_${rnd}_${idx}">${t2||'Por definir'}</span>
       <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g2"
-        placeholder="0" value="${p.g2||''}" ${tbd?'disabled':''}
+        placeholder="-" value="${p.g2||''}" ${tbd?'disabled':''}
         oninput="onLlaveInput('${rnd}',${idx})"></div>
     </div>
     <div class="bm-pts">
@@ -1579,7 +1590,7 @@ function setPredView(v){
 }
 
 function renderPredContent(){
-  const active = participants.filter(p=>p.nombre&&p.activo==='ACTIVO');
+  let active = participants.filter(p=>p.nombre&&p.activo==='ACTIVO');
   if(!cfg.visible){
     document.getElementById('pred-status').textContent='🔒 Las predicciones se publican automáticamente cuando empiece el Mundial.';
     document.getElementById('pred-content').innerHTML='';
@@ -1589,6 +1600,13 @@ function renderPredContent(){
     document.getElementById('pred-content').innerHTML='<div style="color:var(--text-dim);padding:20px">No hay predicciones aún.</div>';
     return;
   }
+  // Ordenar por puntos (líder primero)
+  const enElim = cfg.eliminatoria_abierta;
+  active = [...active].sort((a,b) => {
+    const pa = enElim ? (a.ptsElim||0) : (a.ptsGrupos||0);
+    const pb = enElim ? (b.ptsElim||0) : (b.ptsGrupos||0);
+    return pb - pa;
+  });
   document.getElementById('pred-status').textContent='Predicciones publicadas — '+active.length+' participantes';
   if(predView==='llave') renderPredLlave(active);
   else renderPredGrupos(active);
@@ -1637,10 +1655,70 @@ function renderPredGrupos(active){
 }
 
 function renderPredLlave(active){
-  // Render each person's elimination bracket as a compact visual
-  const rndKeys = ['r16','r8','r4','r2','final','third'];
-  const rndLabels = {r16:'16avos',r8:'Octavos',r4:'Cuartos',r2:'Semis',final:'Final',third:'3er P.'};
+  // Fechas de eliminatoria por ronda
+  const rndFechas = {
+    r16: '28 jun – 5 jul', r8: '6–9 jul', r4: '11–14 jul',
+    r2: '15 jul', final: '19 jul', third: '18 jul'
+  };
+  const rndLabels = {r16:'16avos',r8:'Octavos',r4:'Cuartos',r2:'Semis',final:'Final',third:'3er Puesto'};
   const rndPts = {r16:5,r8:10,r4:20,r2:30,final:60,third:30};
+  const rndN = {r16:16,r8:8,r4:4,r2:2,final:1,third:1};
+
+  document.getElementById('pred-content').innerHTML = active.map((p, posicion) => {
+    const elim = p.data || {};
+    const divClass = p.division==='A' ? 'div-a' : p.division==='B' ? 'div-b' : 'div-none';
+    const pts = cfg.eliminatoria_abierta ? (p.ptsElim||0) : (p.ptsGrupos||0);
+
+    // Build sections by round
+    let sections = '';
+    ['r16','r8','r4','r2','final','third'].forEach(rnd => {
+      const arr = elim[rnd];
+      if(!Array.isArray(arr)) return;
+      const filled = arr.filter(m => m && (m.win || m.g1!=='' || m.g2!==''));
+      if(!filled.length) return;
+
+      const matchLines = arr.map((m, idx) => {
+        if(!m || (!m.win && m.g1==='' && m.g2==='')) return '';
+        const bt = rnd==='r16' ? (llaveTeams[idx] || {}) : {};
+        const t1 = bt.t1 || BRACKET_R16_DEF[idx]?.lbl1 || '?';
+        const t2 = bt.t2 || BRACKET_R16_DEF[idx]?.lbl2 || '?';
+        const equipos = rnd==='r16' ? `${t1} vs ${t2}` : `P${idx+1}`;
+        const marcador = (m.g1!==''||m.g2!=='') ? `${m.g1??'?'} – ${m.g2??'?'}` : '—';
+        const ganador = m.win || '?';
+        return `<div class="pred-match">
+          <span class="pred-match-teams">${equipos}</span>
+          <span class="pred-score">${marcador}</span>
+          <span style="font-size:.7rem;color:var(--gold);margin-left:6px">→ ${ganador}</span>
+        </div>`;
+      }).filter(Boolean).join('');
+
+      if(!matchLines) return;
+      sections += `<div class="pred-group-label">🏆 ${rndLabels[rnd]} · ${rndFechas[rnd]} · ${rndPts[rnd]} pts</div>${matchLines}`;
+    });
+
+    const preview = sections ? sections.split('pred-group-label').slice(0,2).join('pred-group-label') : '';
+    const rest = sections ? sections.split('pred-group-label').slice(2).join('pred-group-label') : '';
+    const previewHTML = preview || '<div style="color:var(--text-dim);font-size:.8rem;padding:4px 0">No ha llenado la llave todavía.</div>';
+
+    return `<div class="pred-card">
+      <div class="pred-card-hdr ${divClass}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-dim)">${posicion+1}°</span>
+          <div class="pred-card-name">${p.nombre}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${pts>0?`<span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--gold)">${pts} pts</span>`:''}
+          ${cfg.divisiones_visibles && p.division?`<span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}" style="font-size:.65rem">Div ${p.division}</span>`:''}
+        </div>
+      </div>
+      <div class="pred-card-body">
+        ${previewHTML}
+        ${rest ? `<div id="pred-rest-${posicion}" style="display:none"><div class="pred-group-label">${rest.replace(/^pred-group-label/,'')}</div></div>
+        <button class="pred-ver-btn" onclick="togPred(${posicion})" id="pred-btn-${posicion}">▼ ver más rondas</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
 
   document.getElementById('pred-content').innerHTML = active.map((p,pi) => {
     const elim = p.data || {};
