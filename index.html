@@ -1670,7 +1670,7 @@ function renderPredLlave(active){
     const pts = cfg.eliminatoria_abierta ? (p.ptsElim||0) : (p.ptsGrupos||0);
 
     // Build sections by round
-    let sections = '';
+    const sectionsArr = [];
     ['r16','r8','r4','r2','final','third'].forEach(rnd => {
       const arr = elim[rnd];
       if(!Array.isArray(arr)) return;
@@ -1693,12 +1693,13 @@ function renderPredLlave(active){
       }).filter(Boolean).join('');
 
       if(!matchLines) return;
-      sections += `<div class="pred-group-label">🏆 ${rndLabels[rnd]} · ${rndFechas[rnd]} · ${rndPts[rnd]} pts</div>${matchLines}`;
+      sectionsArr.push(`<div class="pred-group-label">🏆 ${rndLabels[rnd]} · ${rndFechas[rnd]} · ${rndPts[rnd]} pts</div>${matchLines}`);
     });
 
-    const preview = sections ? sections.split('pred-group-label').slice(0,2).join('pred-group-label') : '';
-    const rest = sections ? sections.split('pred-group-label').slice(2).join('pred-group-label') : '';
-    const previewHTML = preview || '<div style="color:var(--text-dim);font-size:.8rem;padding:4px 0">No ha llenado la llave todavía.</div>';
+    const previewHTML = sectionsArr.length > 0 
+      ? sectionsArr[0] 
+      : '<div style="color:var(--text-dim);font-size:.8rem;padding:4px 0">No ha llenado la llave todavía.</div>';
+    const restHTML = sectionsArr.slice(1).join('');
 
     return `<div class="pred-card">
       <div class="pred-card-hdr ${divClass}">
@@ -1713,7 +1714,7 @@ function renderPredLlave(active){
       </div>
       <div class="pred-card-body">
         ${previewHTML}
-        ${rest ? `<div id="pred-rest-${posicion}" style="display:none"><div class="pred-group-label">${rest.replace(/^pred-group-label/,'')}</div></div>
+        ${restHTML ? `<div id="pred-rest-${posicion}" style="display:none">${restHTML}</div>
         <button class="pred-ver-btn" onclick="togPred(${posicion})" id="pred-btn-${posicion}">▼ ver más rondas</button>` : ''}
       </div>
     </div>`;
