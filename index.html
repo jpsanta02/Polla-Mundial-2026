@@ -921,9 +921,9 @@ function buildGroupsForm(){
       const matches = GM[g].map((m,mi)=>`
         <div class="match-row">
           <div class="match-team">${teams[m[0]]}</div>
-          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t1" placeholder="0" oninput="updProg()">
+          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t1" placeholder="-" oninput="updProg()" onwheel="this.blur()">
           <div class="match-sep">-</div>
-          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t2" placeholder="0" oninput="updProg()">
+          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t2" placeholder="-" oninput="updProg()" onwheel="this.blur()">
           <div class="match-team">${teams[m[1]]}</div>
           <div class="match-date">${m[2]}</div>
         </div>`).join('');
@@ -1104,7 +1104,7 @@ async function submitElim(){
   msg.style.background = 'rgba(39,174,96,0.1)';
   msg.style.border = '1px solid rgba(39,174,96,0.3)';
   msg.style.color = '#27AE60';
-  msg.textContent = '✅ ¡Llave enviada, ' + elimParticipante.nombre + '! El organizador la verá en el Sheet.';
+  msg.textContent = '✅ ¡Llave enviada, ' + elimParticipante.nombre + '! Tus predicciones quedaron guardadas.';
   btn.textContent = '✓ Enviado';
 }
 
@@ -1212,14 +1212,14 @@ function renderLlaveMatch(rnd, idx, mobile=false){
         <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g1" placeholder="-" value="${p.g1||''}"
           ${tbd?'disabled':''}
           style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
-          oninput="onLlaveInput('${rnd}',${idx})">
+          oninput="onLlaveInput('${rnd}',${idx})" onwheel="this.blur()">
       </div>
       <div class="bmm-row">
         <span class="bmm-team${!t2||t2==='?'?' tbd':''}" id="bmt2_${rnd}_${idx}">${t2||'Por definir'}</span>
         <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g2" placeholder="-" value="${p.g2||''}"
           ${tbd?'disabled':''}
           style="width:36px;height:32px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:.9rem;"
-          oninput="onLlaveInput('${rnd}',${idx})">
+          oninput="onLlaveInput('${rnd}',${idx})" onwheel="this.blur()">
       </div>
       ${!tbd?`<div style="margin-top:8px;font-size:.72rem;color:var(--text-dim)">Ganador / clasifica:</div>
       <select id="bm_${rnd}_${idx}_win" style="width:100%;margin-top:4px;background:var(--dark4);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--text);font-size:.8rem;outline:none;" onchange="onLlaveWin('${rnd}',${idx})">
@@ -1236,13 +1236,13 @@ function renderLlaveMatch(rnd, idx, mobile=false){
       <span class="bm-name${!t1||t1==='?'?' tbd':''}" id="bkt1_${rnd}_${idx}">${t1||'Por definir'}</span>
       <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g1"
         placeholder="-" value="${p.g1||''}" ${tbd?'disabled':''}
-        oninput="onLlaveInput('${rnd}',${idx})"></div>
+        oninput="onLlaveInput('${rnd}',${idx})" onwheel="this.blur()"></div>
     </div>
     <div class="bm-team${p.win===t2?' winner':''}">
       <span class="bm-name${!t2||t2==='?'?' tbd':''}" id="bkt2_${rnd}_${idx}">${t2||'Por definir'}</span>
       <div class="bm-score"><input type="number" min="0" max="20" id="bk_${rnd}_${idx}_g2"
         placeholder="-" value="${p.g2||''}" ${tbd?'disabled':''}
-        oninput="onLlaveInput('${rnd}',${idx})"></div>
+        oninput="onLlaveInput('${rnd}',${idx})" onwheel="this.blur()"></div>
     </div>
     <div class="bm-pts">
       ${!tbd?`<select id="bk_${rnd}_${idx}_win"
@@ -1665,7 +1665,7 @@ function renderPredLlave(active){
   const rndN = {r16:16,r8:8,r4:4,r2:2,final:1,third:1};
 
   document.getElementById('pred-content').innerHTML = active.map((p, posicion) => {
-    const elim = p.data || {};
+    const elim = p.elimData || {};
     const divClass = p.division==='A' ? 'div-a' : p.division==='B' ? 'div-b' : 'div-none';
     const pts = cfg.eliminatoria_abierta ? (p.ptsElim||0) : (p.ptsGrupos||0);
 
