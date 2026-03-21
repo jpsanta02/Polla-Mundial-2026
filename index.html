@@ -1328,12 +1328,16 @@ function onLlaveInput(rnd, idx){
   if(document.getElementById(g1k)) document.getElementById(g1k).value = document.getElementById(g1k).value;
   if(document.getElementById(g1m)) document.getElementById(g1m).value = document.getElementById(g1k)?.value || document.getElementById(g1m)?.value || '';
 
+  // Save team names too
+  const {t1, t2} = getLlaveTeams(rnd, idx);
+  llavePred[rnd][idx].t1 = t1;
+  llavePred[rnd][idx].t2 = t2;
+
   if(!isNaN(g1) && !isNaN(g2)){
     llavePred[rnd][idx].g1 = g1;
     llavePred[rnd][idx].g2 = g2;
     // Auto-select winner if scores differ
     if(g1 !== g2){
-      const {t1, t2} = getLlaveTeams(rnd, idx);
       const win = g1 > g2 ? t1 : t2;
       llavePred[rnd][idx].win = win;
       ['bk','bm'].forEach(pre => {
@@ -1346,10 +1350,13 @@ function onLlaveInput(rnd, idx){
 }
 
 function onLlaveWin(rnd, idx){
-  // Read winner from whichever selector changed
   const win = document.getElementById(`bk_${rnd}_${idx}_win`)?.value ||
               document.getElementById(`bm_${rnd}_${idx}_win`)?.value || '';
   llavePred[rnd][idx].win = win;
+  // Save team names too
+  const {t1, t2} = getLlaveTeams(rnd, idx);
+  llavePred[rnd][idx].t1 = t1;
+  llavePred[rnd][idx].t2 = t2;
   // Sync both selectors
   ['bk','bm'].forEach(pre => {
     const sel = document.getElementById(`${pre}_${rnd}_${idx}_win`);
@@ -1680,9 +1687,9 @@ function renderPredLlave(active){
       const matchLines = arr.map((m, idx) => {
         if(!m || (!m.win && m.g1==='' && m.g2==='')) return '';
         const bt = rnd==='r16' ? (llaveTeams[idx] || {}) : {};
-        const t1 = bt.t1 || BRACKET_R16_DEF[idx]?.lbl1 || '?';
-        const t2 = bt.t2 || BRACKET_R16_DEF[idx]?.lbl2 || '?';
-        const equipos = rnd==='r16' ? `${t1} vs ${t2}` : `P${idx+1}`;
+        const t1 = m.t1 || (rnd==='r16' ? (bt.t1||BRACKET_R16_DEF[idx]?.lbl1||'?') : '?');
+        const t2 = m.t2 || (rnd==='r16' ? (bt.t2||BRACKET_R16_DEF[idx]?.lbl2||'?') : '?');
+        const equipos = `${t1} vs ${t2}`;
         const marcador = (m.g1!==''||m.g2!=='') ? `${m.g1??'?'} – ${m.g2??'?'}` : '—';
         const ganador = m.win || '?';
         return `<div class="pred-match">
@@ -1728,7 +1735,11 @@ async function loadPred(){
   document.getElementById('pred-status').textContent='';
 
   try {
-    const d = await jsonpFetch(GS_URL+'?action=getParticipants');
+    // Load both participants and eliminatoria teams in parallel
+    const [d] = await Promise.all([
+      jsonpFetch(GS_URL+'?action=getParticipants'),
+      loadEliminatoriaTeams()
+    ]);
     if(Array.isArray(d)){
       const cfgRow = d.find(p=>p.id==='__config__');
       if(cfgRow){
