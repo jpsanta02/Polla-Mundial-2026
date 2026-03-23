@@ -543,8 +543,8 @@ input[type=number]{-moz-appearance:textfield;}
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-out btn-sm" onclick="setTablaDiv('all')" id="tab-all">Todos</button>
-      <button class="btn btn-out btn-sm" onclick="setTablaDiv('A')" id="tab-A">División A</button>
-      <button class="btn btn-out btn-sm" onclick="setTablaDiv('B')" id="tab-B">División B</button>
+      <button class="btn btn-out btn-sm" onclick="setTablaDiv('A')" id="tab-A" style="display:none">División A</button>
+      <button class="btn btn-out btn-sm" onclick="setTablaDiv('B')" id="tab-B" style="display:none">División B</button>
       <button class="btn btn-out btn-sm" onclick="loadTabla()">↻</button>
     </div>
   </div>
@@ -556,7 +556,7 @@ input[type=number]{-moz-appearance:textfield;}
         <thead><tr>
           <th style="width:44px">#</th>
           <th>Participante</th>
-          <th>Div.</th>
+          <th id="th-div">Div.</th>
           <th>Grupos</th>
           <th>Elim.</th>
           <th>Total</th>
@@ -1513,7 +1513,22 @@ function setTablaDiv(d){
   ['all','A','B'].forEach(x=>{
     document.getElementById('tab-'+x).className='btn btn-out btn-sm'+(x===d?' btn-gold':'');
   });
+  // Show/hide division column based on active tab
+  const thDiv = document.getElementById('th-div');
+  if(thDiv) thDiv.style.display = d==='all' ? 'none' : '';
   renderTabla();
+}
+
+function applyTablaVisibility(){
+  // Show division tabs only when divisiones_visibles = SI
+  const showDivs = cfg.divisiones_visibles;
+  document.getElementById('tab-A').style.display = showDivs ? '' : 'none';
+  document.getElementById('tab-B').style.display = showDivs ? '' : 'none';
+  // If currently on a division tab but divisions hidden, reset to all
+  if(!showDivs && tablaDiv !== 'all') setTablaDiv('all');
+  // Hide division column when on Todos tab
+  const thDiv = document.getElementById('th-div');
+  if(thDiv) thDiv.style.display = tablaDiv==='all' ? 'none' : '';
 }
 
 async function loadTabla(){
@@ -1521,11 +1536,19 @@ async function loadTabla(){
   document.getElementById('tabla-content').style.display='none';
   try {
     const d = await jsonpFetch(GS_URL+'?action=getParticipants');
-    if(Array.isArray(d)) participants = d;
+    if(Array.isArray(d)){
+      const cfgRow = d.find(p=>p.id==='__config__');
+      if(cfgRow){
+        cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
+        cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
+      }
+      participants = d.filter(p=>p.id!=='__config__');
+    }
   } catch(e){ console.log('tabla error', e); }
   document.getElementById('tabla-loading').style.display='none';
   document.getElementById('tabla-content').style.display='block';
   document.getElementById('tabla-ts').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CO');
+  applyTablaVisibility();
   renderTabla();
 }
 
@@ -1574,7 +1597,7 @@ function renderTabla(){
     return `<tr>
       <td><span class="r-num">${i+1}</span></td>
       <td><div style="font-weight:500">${p.nombre}</div></td>
-      <td>${cfg.divisiones_visibles && p.division?`<span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}">Div. ${p.division}</span>`:'<span class="tag tag-dim">—</span>'}</td>
+      <td>${tablaDiv!=='all' && cfg.divisiones_visibles && p.division?`<span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}">Div. ${p.division}</span>`:'<span class="tag tag-dim" style="${tablaDiv==="all"?"display:none":""}">—</span>'}</td>
       ${ptsLabel}
       <td><span class="r-pts" style="font-size:1rem">${pts}</span></td>
       <td class="bar-wrap"><div class="bar" style="width:${pct}%"></div></td>
