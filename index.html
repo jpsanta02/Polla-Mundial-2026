@@ -435,7 +435,7 @@ select{-webkit-appearance:none;appearance:none;background-image:url("data:image/
     <div class="grid2">
       <div class="field"><label>Nombre completo *</label><input class="inp" id="f-nom" type="text" placeholder="Juan Pérez" oninput="updProg()"></div>
       <div class="field"><label>WhatsApp *</label><input class="inp" id="f-wa" type="tel" placeholder="+57 300 000 0000" oninput="updProg()"></div>
-      <div class="field"><label>Correo</label><input class="inp" id="f-email" type="email" placeholder="juan@email.com"></div>
+
     </div>
 
     <div class="sec" style="margin-top:28px">
@@ -481,11 +481,7 @@ select{-webkit-appearance:none;appearance:none;background-image:url("data:image/
             <label>Número de celular</label>
             <input class="inp" id="elim-wa" type="tel" placeholder="3001234567">
           </div>
-          <div style="text-align:center;color:var(--text-dim);font-size:.8rem;margin-bottom:16px">— o —</div>
-          <div class="field" style="margin-bottom:24px">
-            <label>Correo electrónico</label>
-            <input class="inp" id="elim-email" type="email" placeholder="tu@correo.com">
-          </div>
+
           <div id="elim-verify-msg" style="display:none;padding:10px 14px;border-radius:8px;font-size:.83rem;margin-bottom:16px"></div>
           <button class="btn btn-gold" style="width:100%" onclick="verificarElim()">
             Verificar y continuar →
@@ -794,11 +790,12 @@ function go(name){
   PAGES.forEach(p=>{
     document.getElementById('pg-'+p).classList.toggle('on', p===name);
   });
+  const tabNames = ['home','form','tabla','predicciones','premios','reglas'];
   document.querySelectorAll('.ntab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','predicciones','premios'][i]===name);
+    t.classList.toggle('on', tabNames[i]===name);
   });
   document.querySelectorAll('.mob-tab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','predicciones','premios'][i]===name);
+    t.classList.toggle('on', tabNames[i]===name);
   });
   // close mobile menu after navigation
   document.getElementById('mob-menu').classList.remove('open');
@@ -1009,7 +1006,7 @@ let elimParticipante = null; // {id, nombre, whatsapp, email}
 
 async function verificarElim(){
   const wa = document.getElementById('elim-wa').value.trim().replace(/\D/g,'');
-  const em = document.getElementById('elim-email').value.trim().toLowerCase();
+  const em = '';
   const msg = document.getElementById('elim-verify-msg');
 
   if(!wa && !em){
@@ -1031,7 +1028,7 @@ async function verificarElim(){
     const url = GS_URL + '?action=verificarParticipante&whatsapp=' + encodeURIComponent(wa) + '&email=' + encodeURIComponent(em);
     const d = await jsonpFetch(url);
     if(d && d.ok){
-      elimParticipante = {id: d.id, nombre: d.nombre, whatsapp: wa, email: em};
+      elimParticipante = {id: d.id, nombre: d.nombre, whatsapp: wa};
       // Load any existing elim data
       if(d.elimData && Object.keys(d.elimData).length > 0){
         llavePred = d.elimData;
@@ -1078,7 +1075,6 @@ async function submitElim(){
       action: 'submitElim',
       data: {
         whatsapp: elimParticipante.whatsapp,
-        email: elimParticipante.email,
         elim: llavePred
       }
     });
@@ -1483,7 +1479,6 @@ function generateConfirmPDF(data){
     <div class="meta">
       <strong>${data.nombre}</strong><br>
       📱 ${data.whatsapp}<br>
-      ${data.email?'✉ '+data.email+'<br>':''}
       🕐 ${now}
     </div>
   </div>
@@ -1512,7 +1507,6 @@ function collectData(){
   const d = {
     nombre: document.getElementById('f-nom').value.trim(),
     whatsapp: document.getElementById('f-wa').value.trim(),
-    email: document.getElementById('f-email').value,
     phase, timestamp: new Date().toISOString(),
     scores:{}, positions:{}, questions:{}
   };
@@ -2082,7 +2076,23 @@ async function savePts(i){
 
 // ═══════════════════════════════ JSONP FETCH (evita CORS) ═══════════════════════════════
 async function jsonpFetch(url) {
-  // Always use JSONP — fetch() doesn't work with Apps Script due to cross-origin redirects
+  // Detect Safari/iOS — always use JSONP to avoid CORS issues
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
+                   /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if (!isSafari) {
+    // Try regular fetch first (Chrome, Firefox, etc.)
+    try {
+      const resp = await fetch(url, {method:'GET'});
+      if(resp.ok){
+        const text = await resp.text();
+        const clean = text.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, '');
+        return JSON.parse(clean);
+      }
+    } catch(e) { /* fall through to JSONP */ }
+  }
+
+  // JSONP — works everywhere including Safari iOS
   return new Promise((resolve, reject) => {
     const cbName = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
     const script = document.createElement('script');
@@ -2091,14 +2101,13 @@ async function jsonpFetch(url) {
       script.remove();
       resolve(data);
     };
-    // Apps Script needs callback in URL — append correctly whether URL has ? or not
-    const sep = url.includes('?') ? '&' : '?';
-    script.src = url + sep + 'callback=' + cbName;
+    script.src = url + '&callback=' + cbName;
+    script.crossOrigin = 'anonymous';
     script.onerror = () => { delete window[cbName]; script.remove(); reject(new Error('JSONP error')); };
     document.head.appendChild(script);
     setTimeout(() => {
       if(window[cbName]){ delete window[cbName]; script.remove(); reject(new Error('timeout')); }
-    }, 12000);
+    }, 10000);
   });
 }
 
@@ -2120,6 +2129,25 @@ function toast(msg, type=''){
 }
 
 // ═══════════════════════════════ INIT ═══════════════════════════════
+// ── Enter key moves to next score input on mobile ──
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  const active = document.activeElement;
+  if(!active) return;
+  const isScore = active.classList.contains('score-inp') ||
+                  (active.tagName === 'INPUT' && active.type === 'number');
+  if(!isScore) return;
+  e.preventDefault();
+  // Find all visible number inputs and move to next
+  const allInputs = Array.from(document.querySelectorAll('input[type="number"]'))
+    .filter(el => el.offsetParent !== null); // only visible
+  const idx = allInputs.indexOf(active);
+  if(idx !== -1 && idx < allInputs.length - 1){
+    allInputs[idx + 1].focus();
+    allInputs[idx + 1].select();
+  }
+});
+
 document.addEventListener('DOMContentLoaded',()=>{
   buildHomeGroups();
   buildGroupsForm();
