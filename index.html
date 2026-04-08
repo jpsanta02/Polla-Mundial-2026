@@ -16,6 +16,8 @@
   --shadow:0 2px 12px rgba(0,0,0,0.08);
   --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
   --radius:12px; --radius-sm:8px;
+  /* variables de fondo oscuro para el bracket */
+  --dark3:#f0f2f8; --dark4:#ffffff;
   /* rainbow gradient for card accents */
   --rainbow: linear-gradient(90deg, #E8192C 0%, #003DA5 33%, #007A3D 66%, #F0B429 100%);
 }
@@ -86,7 +88,6 @@ main{position:relative;}
 
 /* ── CARDS ── */
 .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 12px 35px rgba(0,0,0,0.07);padding:24px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
-.card::before{content:'';position:absolute;top:0;left:0;height:5px;width:100%;background:var(--rainbow);}
 .card:hover{transform:translateY(-4px);box-shadow:0 16px 45px rgba(0,0,0,0.12);}
 .card-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
@@ -106,6 +107,8 @@ main{position:relative;}
 .btn-sm{padding:6px 14px;font-size:.78rem;}
 .btn-ghost{background:transparent;color:var(--red);border:1.5px solid var(--red);}
 .btn-ghost:hover{background:var(--red);color:#fff;}
+.btn-green{background:linear-gradient(135deg,var(--green),#005c2e);color:#fff;box-shadow:0 4px 15px rgba(0,122,61,0.25);}
+.btn-green:hover{background:linear-gradient(135deg,#005c2e,#003d1c);transform:translateY(-1px);}
 
 /* ── BADGES / TAGS ── */
 .badge{background:var(--red);color:#fff;font-size:.6rem;padding:3px 7px;border-radius:4px;font-family:'DM Mono',monospace;font-weight:700;letter-spacing:1px;}
@@ -317,6 +320,7 @@ input[type=number]{-moz-appearance:textfield;}
 /* ── REGLA CARD HOVER ── */
 .regla-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:14px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;}
 .regla-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.regla-title{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:900;letter-spacing:1px;color:var(--text);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);}
 
 /* ── PRIZES CARD HOVER ── */
 .prizes-hero{background:linear-gradient(135deg,var(--blue),#001a5e);border-radius:var(--radius);padding:28px;color:#fff;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;box-shadow:0 8px 30px rgba(0,61,165,0.25);}
@@ -463,63 +467,27 @@ input[type=number]{-moz-appearance:textfield;}
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
           <div style="position:absolute;top:0;left:0;right:0;height:5px;background:var(--rainbow)"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div class="card-title" style="margin-bottom:0">⚽ Próximos Partidos</div>
+            <div class="card-title" style="margin-bottom:0">⚽ Resultados</div>
             <span class="tag tag-blue">Fase de Grupos</span>
           </div>
-          <div style="font-size:.8rem;color:var(--text-dim);margin-bottom:16px">Ingresa tus predicciones antes de que inicie cada partido. ¡Buena suerte!</div>
-          <!-- Partidos primer día: Grupo A y B (primeros de cada grupo) -->
+          <div style="font-size:.8rem;color:var(--text-dim);margin-bottom:16px">Últimos partidos con resultado.</div>
           <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:16px" id="home-proximos">
-            <!-- Se rellena con los primeros partidos de cada grupo usando los datos reales -->
-            <div style="padding:20px;text-align:center;color:var(--text-dim);font-size:.83rem;">
-              <div style="font-family:'DM Mono',monospace;font-size:.68rem;margin-bottom:4px;">11 Jun – Jornada 1</div>
-              <div style="display:flex;flex-direction:column;gap:8px;" id="home-proximos-list">
-                <!-- Generado por JS -->
-              </div>
+            <div style="display:flex;flex-direction:column;gap:0;" id="home-proximos-list">
+              <!-- Generado por JS -->
             </div>
           </div>
-          <div style="text-align:center;margin-bottom:12px;">
+          <div style="text-align:center;">
             <button class="btn btn-red" onclick="go('form')" style="width:100%;justify-content:center;padding:12px;">✏️ Ir a Mi Polla</button>
-          </div>
-          <div style="background:rgba(0,122,61,0.06);border:1px solid rgba(0,122,61,0.2);border-radius:var(--radius-sm);padding:10px 14px;font-size:.8rem;color:var(--green);display:flex;align-items:center;gap:8px;">
-            ℹ️ ¡Recuerda! Puedes cambiar tus predicciones hasta el inicio de cada partido.
           </div>
         </div>
 
-        <!-- Información y Fechas clave Card -->
+        <!-- Información Card — contenido libre para el organizador -->
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:5px;background:var(--rainbow)"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-            <div class="card-title" style="margin-bottom:0">📅 Información</div>
-            <button class="btn btn-out btn-sm" onclick="go('reglas')">Ver reglas completas</button>
+          <div style="display:flex;align-items:center;margin-bottom:12px;">
+            <div class="card-title" style="margin-bottom:0">📣 Información</div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
-            <div style="background:rgba(0,122,61,0.06);border:1px solid rgba(0,122,61,0.15);border-radius:var(--radius-sm);padding:14px;text-align:center;">
-              <div style="font-size:1.3rem;margin-bottom:6px;">🏆</div>
-              <div style="font-size:.72rem;font-weight:800;color:var(--green);letter-spacing:.5px;margin-bottom:4px;">Fase de Grupos</div>
-              <div style="font-size:.7rem;color:var(--text-dim);">11 Jun – 27 Jun</div>
-              <div style="font-size:.68rem;color:var(--text-dim);margin-top:2px;">48 Partidos</div>
-            </div>
-            <div style="background:rgba(0,61,165,0.06);border:1px solid rgba(0,61,165,0.15);border-radius:var(--radius-sm);padding:14px;text-align:center;">
-              <div style="font-size:1.3rem;margin-bottom:6px;">🚩</div>
-              <div style="font-size:.72rem;font-weight:800;color:var(--blue);letter-spacing:.5px;margin-bottom:4px;">Octavos de Final</div>
-              <div style="font-size:.7rem;color:var(--text-dim);">28 Jun – 3 Jul</div>
-              <div style="font-size:.68rem;color:var(--text-dim);margin-top:2px;">16 Partidos</div>
-            </div>
-            <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:var(--radius-sm);padding:14px;text-align:center;">
-              <div style="font-size:1.3rem;margin-bottom:6px;">🥇</div>
-              <div style="font-size:.72rem;font-weight:800;color:#8B6914;letter-spacing:.5px;margin-bottom:4px;">Cuartos de Final</div>
-              <div style="font-size:.7rem;color:var(--text-dim);">4 Jul – 7 Jul</div>
-              <div style="font-size:.68rem;color:var(--text-dim);margin-top:2px;">8 Partidos</div>
-            </div>
-            <div style="background:rgba(232,25,44,0.06);border:1px solid rgba(232,25,44,0.15);border-radius:var(--radius-sm);padding:14px;text-align:center;">
-              <div style="font-size:1.3rem;margin-bottom:6px;">🥈</div>
-              <div style="font-size:.72rem;font-weight:800;color:var(--red);letter-spacing:.5px;margin-bottom:4px;">Semifinales y Final</div>
-              <div style="font-size:.7rem;color:var(--text-dim);">8 Jul – 19 Jul</div>
-              <div style="font-size:.68rem;color:var(--text-dim);margin-top:2px;">3 Partidos</div>
-            </div>
-          </div>
-          <div style="background:rgba(0,61,165,0.04);border:1px solid rgba(0,61,165,0.12);border-radius:var(--radius-sm);padding:11px 16px;font-size:.82rem;color:var(--text-mid);text-align:center;">
-            🎉 La final se jugará el <strong>19 de julio de 2026</strong>. ¡Prepárate para la emoción!
+          <div id="home-info-content" style="font-size:.88rem;color:var(--text-mid);line-height:1.8;min-height:40px;">
+            <!-- Escribe aquí tus mensajes para los participantes -->
           </div>
         </div>
 
@@ -589,6 +557,9 @@ input[type=number]{-moz-appearance:textfield;}
       <div class="field"><label>Nombre completo *</label><input class="inp" id="f-nom" type="text" placeholder="Juan Pérez" oninput="updProg()"></div>
       <div class="field"><label>WhatsApp *</label><input class="inp" id="f-wa" type="tel" placeholder="+57 300 000 0000" oninput="updProg()"></div>
     </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="field"><label>Correo electrónico (opcional)</label><input class="inp" id="f-email" type="email" placeholder="tucorreo@email.com"></div>
+    </div>
 
     <div class="sec" style="margin-top:28px">
       Fase
@@ -627,9 +598,13 @@ input[type=number]{-moz-appearance:textfield;}
           <div style="color:var(--text-dim);font-size:.88rem;margin-top:6px">Ingresa tu número de celular para continuar</div>
         </div>
         <div class="verify-card">
-          <div class="field" style="margin-bottom:24px">
+          <div class="field" style="margin-bottom:16px">
             <label>Número de celular</label>
             <input class="inp" id="elim-wa" type="tel" placeholder="3001234567">
+          </div>
+          <div class="field" style="margin-bottom:24px">
+            <label>O correo electrónico</label>
+            <input class="inp" id="elim-email" type="email" placeholder="tucorreo@email.com">
           </div>
           <div id="elim-verify-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);font-size:.83rem;margin-bottom:16px"></div>
           <button class="btn btn-red" style="width:100%" onclick="verificarElim()">Verificar y continuar →</button>
@@ -684,7 +659,7 @@ input[type=number]{-moz-appearance:textfield;}
       <button class="btn btn-red btn-sm" onclick="setTablaView('grupos')" id="tab-grupos">⚽ Grupos</button>
       <button class="btn btn-out btn-sm" onclick="setTablaView('elim')" id="tab-elim">🏆 Eliminatoria</button>
       <button class="btn btn-out btn-sm" onclick="setTablaView('global')" id="tab-global">🌍 Global</button>
-      <button class="btn btn-out btn-sm" onclick="loadTabla()">↻</button>
+      <button class="btn btn-out btn-sm" onclick="loadTabla(true)">↻</button>
     </div>
   </div>
   <div id="tabla-loading" class="loading"><div class="spinner"></div>Cargando...</div>
@@ -851,7 +826,7 @@ const FLAG_CODES = {
   "España":"es","Cabo Verde":"cv","Arabia Saudita":"sa","Uruguay":"uy",
   "Francia":"fr","Senegal":"sn","Irak":"iq","Noruega":"no",
   "Argentina":"ar","Argelia":"dz","Austria":"at","Jordania":"jo",
-  "Portugal":"pt","República del Congo":"cg","Uzbekistán":"uz","Colombia":"co",
+  "Portugal":"pt","R.D. Congo":"cd","Uzbekistán":"uz","Colombia":"co",
   "Inglaterra":"gb-eng","Croacia":"hr","Ghana":"gh","Panamá":"pa"
 };
 function flagImg(team, lg=false){
@@ -875,7 +850,7 @@ const GROUPS = {
   H:["España","Cabo Verde","Arabia Saudita","Uruguay"],
   I:["Francia","Senegal","Irak","Noruega"],
   J:["Argentina","Argelia","Austria","Jordania"],
-  K:["Portugal","República del Congo","Uzbekistán","Colombia"],
+  K:["Portugal","R.D. Congo","Uzbekistán","Colombia"],
   L:["Inglaterra","Croacia","Ghana","Panamá"]
 };
 
@@ -962,17 +937,17 @@ function go(name){
     document.getElementById('pg-'+p).classList.toggle('on', p===name);
   });
   document.querySelectorAll('.ntab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','predicciones','premios'][i]===name);
+    t.classList.toggle('on', ['home','form','tabla','premios','reglas'][i]===name);
   });
   document.querySelectorAll('.mob-tab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','predicciones','premios'][i]===name);
+    t.classList.toggle('on', ['home','form','tabla','predicciones','premios','reglas'][i]===name);
   });
   // close mobile menu after navigation
   document.getElementById('mob-menu').classList.remove('open');
   if(name==='tabla') loadTabla();
   if(name==='predicciones') loadPred();
   if(name==='premios') calcPremios();
-  if(name==='home') updHome();
+  if(name==='home'){ updHome(); loadHomeResultados(); }
   window.scrollTo(0,0);
 }
 
@@ -987,10 +962,26 @@ function buildHomeGroups(){
   buildHomeProximos();
 }
 
-function buildHomeProximos(){
+function buildHomeProximos(resultados){
   const list = document.getElementById('home-proximos-list');
   if(!list) return;
-  // Show first match of each group (jornada 1), max 6
+
+  // Si hay resultados reales del sheet, mostrar los últimos (max 6)
+  if(resultados && resultados.length > 0){
+    const recent = resultados.slice(-6).reverse();
+    list.innerHTML = recent.map((r, i) => `
+      <div style="display:grid;grid-template-columns:60px 1fr auto auto auto 1fr;gap:4px;align-items:center;padding:7px 0;border-bottom:${i<recent.length-1?'1px solid var(--border)':'none'}">
+        <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);line-height:1.4;">${r.fecha||''}<br><span style="color:var(--blue);font-weight:600">${r.grupo||''}</span></div>
+        <div style="font-size:.78rem;font-weight:500;background:var(--bg);border-radius:5px;padding:5px 6px;display:flex;align-items:center;justify-content:flex-end;gap:4px;">${r.t1} ${flagImg(r.t1)}</div>
+        <div style="background:var(--white);border:1.5px solid var(--border2);border-radius:5px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;color:var(--text);padding:0 4px;">${r.g1}</div>
+        <div style="text-align:center;color:var(--text-dim);font-weight:700;font-size:.7rem;padding:0 1px;">–</div>
+        <div style="background:var(--white);border:1.5px solid var(--border2);border-radius:5px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;color:var(--text);padding:0 4px;">${r.g2}</div>
+        <div style="font-size:.78rem;font-weight:500;background:var(--bg);border-radius:5px;padding:5px 6px;display:flex;align-items:center;justify-content:flex-start;gap:4px;">${flagImg(r.t2)} ${r.t2}</div>
+      </div>`).join('');
+    return;
+  }
+
+  // Sin resultados aún — mostrar primeros partidos de jornada 1 con banderas alineadas
   const rows = [];
   const DATES_J1 = {
     A:'11 jun', B:'12 jun', C:'13 jun', D:'12 jun',
@@ -998,25 +989,31 @@ function buildHomeProximos(){
     I:'16 jun', J:'16 jun', K:'17 jun', L:'17 jun'
   };
   Object.entries(GROUPS).forEach(([g, teams]) => {
-    const m0 = GM[g][0]; // first match of group
+    const m0 = GM[g][0];
     if(!m0) return;
-    const t1 = teams[m0[0]], t2 = teams[m0[1]];
-    const date = DATES_J1[g] || '11 jun';
-    rows.push({g, t1, t2, date});
+    rows.push({g, t1:teams[m0[0]], t2:teams[m0[1]], date:DATES_J1[g]||'11 jun'});
   });
-  // Show first 6
-  list.innerHTML = rows.slice(0, 6).map((r, i) => `
-    <div style="display:grid;grid-template-columns:70px 1fr 32px 8px 32px 1fr;gap:4px;align-items:center;padding:7px 0;border-bottom:${i<5?'1px solid var(--border)':'none'}">
-      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);">${r.date}<br><span style="color:var(--blue);font-weight:600">Grp ${r.g}</span></div>
-      <div style="font-size:.78rem;font-weight:500;background:var(--bg);border-radius:5px;padding:5px 6px;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;">${flagImg(r.t1)} ${r.t1}</div>
-      <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:5px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text-dim);">–</div>
-      <div style="text-align:center;color:var(--text-dim);font-weight:700;font-size:.75rem">–</div>
-      <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:5px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text-dim);">–</div>
-      <div style="font-size:.78rem;font-weight:500;background:var(--bg);border-radius:5px;padding:5px 6px;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;">${flagImg(r.t2)} ${r.t2}</div>
+  list.innerHTML = rows.slice(0,6).map((r,i) => `
+    <div style="display:grid;grid-template-columns:60px 1fr auto auto auto 1fr;gap:4px;align-items:center;padding:7px 0;border-bottom:${i<5?'1px solid var(--border)':'none'}">
+      <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);line-height:1.4;">${r.date}<br><span style="color:var(--blue);font-weight:600">Grp ${r.g}</span></div>
+      <div style="font-size:.78rem;font-weight:500;background:var(--bg);border-radius:5px;padding:5px 6px;display:flex;align-items:center;justify-content:flex-end;gap:4px;">${r.t1} ${flagImg(r.t1)}</div>
+      <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:5px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text-dim);">–</div>
+      <div style="text-align:center;color:var(--text-dim);font-weight:700;font-size:.7rem;padding:0 1px;">–</div>
+      <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:5px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text-dim);">–</div>
+      <div style="font-size:.78rem;font-weight:500;background:var(--bg);border-radius:5px;padding:5px 6px;display:flex;align-items:center;justify-content:flex-start;gap:4px;">${flagImg(r.t2)} ${r.t2}</div>
     </div>`).join('');
-  // Remove the placeholder wrapper padding
-  const wrap = document.getElementById('home-proximos');
-  if(wrap) wrap.style.padding = '0';
+}
+
+// Cache de resultados para la sección de inicio
+let _homeResultados = null;
+
+function loadHomeResultados(){
+  jsonpFetch(GS_URL+'?action=getResultados').then(d=>{
+    if(d && Array.isArray(d.resultados)){
+      _homeResultados = d.resultados;
+      buildHomeProximos(_homeResultados);
+    }
+  }).catch(()=>{});
 }
 
 function updHome(){
@@ -1150,9 +1147,9 @@ function buildGroupsForm(){
       const matches = GM[g].map((m,mi)=>`
         <div class="match-row">
           <div class="match-team">${flagImg(teams[m[0]])}${teams[m[0]]}</div>
-          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t1" placeholder="-" oninput="updProg()" onwheel="this.blur()" inputmode="numeric">
+          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t1" placeholder="-" oninput="updProg()" onwheel="this.blur()" inputmode="numeric" onkeydown="scoreKeyNav(event,this)">
           <div class="match-sep">-</div>
-          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t2" placeholder="-" oninput="updProg()" onwheel="this.blur()" inputmode="numeric">
+          <input class="score-inp" type="number" min="0" max="20" id="g${g}m${mi}t2" placeholder="-" oninput="updProg()" onwheel="this.blur()" inputmode="numeric" onkeydown="scoreKeyNav(event,this)">
           <div class="match-team">${flagImg(teams[m[1]])}${teams[m[1]]}</div>
           <div class="match-date">${m[2]}</div>
         </div>`).join('');
@@ -1290,33 +1287,57 @@ async function submitElim(){
 
   const btn = document.getElementById('elim-submit-btn');
   const msg = document.getElementById('elim-submit-msg');
+
+  // Evitar doble envío
+  if(btn.disabled) return;
   btn.disabled = true;
   btn.textContent = 'Enviando...';
 
+  let enviado = false;
   try {
-    const payload = JSON.stringify({
-      action: 'submitElim',
-      data: {
-        whatsapp: elimParticipante.whatsapp,
-        email: elimParticipante.email,
-        elim: llavePred
-      }
+    await new Promise((resolve, reject) => {
+      const payload = JSON.stringify({
+        action: 'submitElim',
+        data: {
+          whatsapp: elimParticipante.whatsapp,
+          email: elimParticipante.email,
+          elim: llavePred
+        }
+      });
+      const cbName = 'elcb_' + Date.now();
+      const script = document.createElement('script');
+      const timer = setTimeout(() => {
+        if(window[cbName]){ delete window[cbName]; script.remove(); }
+        reject(new Error('timeout'));
+      }, 10000);
+      window[cbName] = (res) => {
+        clearTimeout(timer);
+        delete window[cbName];
+        script.remove();
+        if(res && res.ok) resolve(res);
+        else reject(new Error('GAS error'));
+      };
+      script.src = GS_URL + '?payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
+      script.crossOrigin = 'anonymous';
+      script.onerror = () => { clearTimeout(timer); delete window[cbName]; script.remove(); reject(new Error('network')); };
+      document.head.appendChild(script);
     });
-
-    // JSONP GET — works on all browsers including Safari iOS
-    const cbName = 'elcb_' + Date.now();
-    const script = document.createElement('script');
-    window[cbName] = (res) => { delete window[cbName]; script.remove(); };
-    script.src = GS_URL + '?payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
-    script.crossOrigin = 'anonymous';
-    script.onerror = () => { delete window[cbName]; script.remove(); };
-    document.head.appendChild(script);
-    setTimeout(() => { if(window[cbName]){ delete window[cbName]; script.remove(); } }, 8000);
+    enviado = true;
   } catch(e) {
     console.log('submitElim error', e);
   }
 
-  // Show success immediately (fire and forget)
+  if(!enviado){
+    btn.disabled = false;
+    btn.textContent = 'Enviar mi Llave →';
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(232,25,44,0.08)';
+    msg.style.border = '1px solid rgba(232,25,44,0.3)';
+    msg.style.color = 'var(--red)';
+    msg.textContent = '⚠️ Error de conexión. Verifica tu internet e intenta de nuevo.';
+    return;
+  }
+
   msg.style.display = 'block';
   msg.style.background = 'rgba(39,174,96,0.1)';
   msg.style.border = '1px solid rgba(39,174,96,0.3)';
@@ -1853,11 +1874,20 @@ function applyTablaVisibility(){
   // nothing needed — we removed divisions
 }
 
-async function loadTabla(){
+let _tablaLoaded = false;
+async function loadTabla(force=false){
+  if(_tablaLoaded && !force){
+    // Already loaded, just re-render
+    document.getElementById('tabla-loading').style.display='none';
+    document.getElementById('tabla-content').style.display='block';
+    renderJornadas();
+    renderTabla();
+    return;
+  }
   document.getElementById('tabla-loading').style.display='block';
   document.getElementById('tabla-content').style.display='none';
   try {
-    const d = await jsonpFetch(GS_URL+'?action=getParticipants');
+    const d = await jsonpFetch(GS_URL+'?action=getParticipantsLight');
     if(Array.isArray(d)){
       const cfgRow = d.find(p=>p.id==='__config__');
       if(cfgRow){
@@ -1867,6 +1897,7 @@ async function loadTabla(){
       participants = d.filter(p=>p.id!=='__config__');
     }
   } catch(e){ console.log('tabla error', e); }
+  _tablaLoaded = true;
   document.getElementById('tabla-loading').style.display='none';
   document.getElementById('tabla-content').style.display='block';
   document.getElementById('tabla-ts').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CO');
@@ -1991,12 +2022,8 @@ let predView = 'grupos'; // 'grupos' or 'llave'
 
 function setPredView(v){
   predView = v;
-  document.getElementById('pred-view-grupos').style.background = v==='grupos' ? 'var(--fifa-red)' : '';
-  document.getElementById('pred-view-grupos').style.color = v==='grupos' ? '#fff' : '';
-  document.getElementById('pred-view-grupos').style.borderColor = v==='grupos' ? 'var(--fifa-red)' : '';
-  document.getElementById('pred-view-llave').style.background = v==='llave' ? 'var(--fifa-red)' : '';
-  document.getElementById('pred-view-llave').style.color = v==='llave' ? '#fff' : '';
-  document.getElementById('pred-view-llave').style.borderColor = v==='llave' ? 'var(--fifa-red)' : '';
+  document.getElementById('pred-view-grupos').className = 'btn btn-sm' + (v==='grupos' ? ' btn-red' : ' btn-out');
+  document.getElementById('pred-view-llave').className  = 'btn btn-sm' + (v==='llave'  ? ' btn-red' : ' btn-out');
   renderPredContent();
 }
 
@@ -2247,7 +2274,7 @@ function loadAdmPanel(){
 async function loadAdmParts(){
   try {
     const d = await jsonpFetch(GS_URL+'?action=getParticipants');
-    if(Array.isArray(d)){participants=d; saveParts();}
+    if(Array.isArray(d)){participants=d.filter(p=>p.id!=='__config__'); saveParts();}
   } catch(e){}
 
   const all = participants.filter(p=>p.nombre);
@@ -2394,6 +2421,20 @@ function togPred(i){
   if(btn) btn.textContent = open ? '▼ ver todo' : '▲ cerrar';
 }
 
+// ═══════════════════════════════ SCORE KEY NAV ═══════════════════════════════
+function scoreKeyNav(e, el){
+  if(e.key !== 'Enter') return;
+  e.preventDefault();
+  // Find all score inputs currently visible
+  const all = Array.from(document.querySelectorAll('.score-inp:not([disabled])'))
+    .filter(inp => inp.offsetParent !== null); // only visible
+  const idx = all.indexOf(el);
+  if(idx >= 0 && idx < all.length - 1){
+    all[idx + 1].focus();
+    all[idx + 1].select();
+  }
+}
+
 // ═══════════════════════════════ TOAST ═══════════════════════════════
 function toast(msg, type=''){
   const t=document.getElementById('toast');
@@ -2412,7 +2453,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyFormState(); // aplica estado inicial
   setTablaView('grupos'); // inicia tabla grupos
 
-  jsonpFetch(GS_URL+'?action=getParticipants').then(d=>{
+  jsonpFetch(GS_URL+'?action=getParticipantsLight').then(d=>{
     if(Array.isArray(d)){
       const cfgRow = d.find(p=>p.id==='__config__');
       if(cfgRow){
