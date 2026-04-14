@@ -1876,8 +1876,37 @@ function applyTablaVisibility(){
 
 let _tablaLoaded = false;
 async function loadTabla(force=false){
+  // ── Bloqueo de tabla hasta inicio del Mundial ──
+  // Se desbloquea automáticamente el 11 jun, o si el admin activa
+  // 'predicciones_visibles = SI' en Config (reutilizamos esa flag).
+  const tablaOpenTime = new Date('2026-06-11T20:00:00Z');
+  const tablaAbierta  = new Date() >= tablaOpenTime || cfg.visible;
+
+  if(!tablaAbierta){
+    document.getElementById('tabla-loading').style.display='none';
+    document.getElementById('tabla-content').style.display='none';
+    // Mostrar banner de bloqueo si no existe ya
+    let blk = document.getElementById('tabla-bloqueo');
+    if(!blk){
+      blk = document.createElement('div');
+      blk.id = 'tabla-bloqueo';
+      blk.style.cssText = 'text-align:center;padding:48px 20px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:8px';
+      blk.innerHTML = `
+        <div style="font-size:2.5rem;margin-bottom:12px">🏆</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:1px;color:var(--text);text-transform:uppercase;margin-bottom:8px">Tabla disponible el 11 de junio</div>
+        <div style="font-size:.88rem;color:var(--text-dim);max-width:360px;margin:0 auto 20px">
+          La tabla de posiciones se activará automáticamente cuando empiece el Mundial.
+        </div>
+        <button class="btn btn-out btn-sm" onclick="loadTabla(true)">↻ Recargar</button>`;
+      document.getElementById('pg-tabla').querySelector('.wrap').appendChild(blk);
+    }
+    return;
+  }
+  // Ocultar banner de bloqueo si ya existe
+  const blk = document.getElementById('tabla-bloqueo');
+  if(blk) blk.remove();
+
   if(_tablaLoaded && !force){
-    // Already loaded, just re-render
     document.getElementById('tabla-loading').style.display='none';
     document.getElementById('tabla-content').style.display='block';
     renderJornadas();
@@ -1893,6 +1922,7 @@ async function loadTabla(force=false){
       if(cfgRow){
         cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
         cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
+        cfg.visible = cfgRow.activo !== 'NO';
       }
       participants = d.filter(p=>p.id!=='__config__');
     }
@@ -2030,8 +2060,16 @@ function setPredView(v){
 function renderPredContent(){
   let active = participants.filter(p=>p.nombre&&p.activo==='ACTIVO');
   if(!cfg.visible){
-    document.getElementById('pred-status').textContent='🔒 Las predicciones se publican automáticamente cuando empiece el Mundial.';
-    document.getElementById('pred-content').innerHTML='';
+    document.getElementById('pred-status').textContent='';
+    document.getElementById('pred-content').innerHTML=`
+      <div style="text-align:center;padding:48px 20px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)">
+        <div style="font-size:2.5rem;margin-bottom:12px">🔒</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:1px;color:var(--text);text-transform:uppercase;margin-bottom:8px">Predicciones bloqueadas</div>
+        <div style="font-size:.88rem;color:var(--text-dim);max-width:360px;margin:0 auto 20px">
+          Las predicciones se publicarán automáticamente cuando empiece el Mundial (11 de junio).
+        </div>
+        <button class="btn btn-out btn-sm" onclick="loadPred()">↻ Recargar</button>
+      </div>`;
     return;
   }
   if(active.length===0){
@@ -2166,7 +2204,6 @@ async function loadPred(){
   document.getElementById('pred-status').textContent='';
 
   try {
-    // Load both participants and eliminatoria teams in parallel
     const [d] = await Promise.all([
       jsonpFetch(GS_URL+'?action=getParticipants'),
       loadEliminatoriaTeams()
@@ -2174,19 +2211,19 @@ async function loadPred(){
     if(Array.isArray(d)){
       const cfgRow = d.find(p=>p.id==='__config__');
       if(cfgRow){
-        cfg.visible = cfgRow.activo!=='NO';
+        cfg.visible = cfgRow.activo !== 'NO';
         cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
         cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
         cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
-      } else {
-        cfg.visible = true;
       }
+      // Si no hay fila __config__ es que el Sheet no tiene Config — mostramos igualmente
+      else { cfg.visible = true; }
       participants = d.filter(p=>p.id!=='__config__');
       applyFormState();
     }
   } catch(e){
     console.log('loadPred error:', e);
-    cfg.visible = true;
+    // NO forzar cfg.visible = true aquí — si falla la red, mejor mostrar error claro
   }
   document.getElementById('pred-loading').style.display='none';
   renderPredContent();
