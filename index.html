@@ -385,12 +385,12 @@ input[type=number]{-moz-appearance:textfield;}
 </header>
 
 <div class="mob-menu" id="mob-menu">
-  <button class="mob-tab on" onclick="go('home');togMenu()">Inicio</button>
-  <button class="mob-tab" onclick="go('form');togMenu()">Mi Polla</button>
-  <button class="mob-tab" onclick="go('tabla');togMenu()">Tabla</button>
-  <button class="mob-tab" onclick="go('predicciones');togMenu()">Predicciones</button>
-  <button class="mob-tab" onclick="go('premios');togMenu()">Premios</button>
-  <button class="mob-tab" onclick="go('reglas');togMenu()">Reglas</button>
+  <button class="mob-tab on" onclick="go('home')">Inicio</button>
+  <button class="mob-tab" onclick="go('form')">Mi Polla</button>
+  <button class="mob-tab" onclick="go('tabla')">Tabla</button>
+  <button class="mob-tab" onclick="go('predicciones')">Predicciones</button>
+  <button class="mob-tab" onclick="go('premios')">Premios</button>
+  <button class="mob-tab" onclick="go('reglas')">Reglas</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -482,8 +482,8 @@ input[type=number]{-moz-appearance:textfield;}
           </div>
         </div>
 
-        <!-- Información Card — contenido libre para el organizador -->
-        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
+        <!-- Información Card — mensaje del organizador (Config C12) -->
+        <div class="info-card" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;display:none">
           <div style="display:flex;align-items:center;margin-bottom:12px;">
             <div class="card-title" style="margin-bottom:0">📣 Información</div>
           </div>
@@ -492,17 +492,12 @@ input[type=number]{-moz-appearance:textfield;}
           </div>
         </div>
 
-        <!-- Stats dinámicos -->
-        <div id="stats-dia-wrap" style="display:none;margin-top:20px">
-          <div class="section-title" style="margin-bottom:12px">📊 Estadísticas</div>
-          <div id="stats-dia-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-        </div>
       </div>
 
-      <!-- Right: Tabla de Posiciones + Premios + Groups -->
+      <!-- Right: Tabla de Posiciones + Groups -->
       <div>
         <!-- Tabla de Posiciones Mini -->
-        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
+        <div id="home-tabla-mini-wrap" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
           <div style="position:absolute;top:0;left:0;right:0;height:5px;background:var(--rainbow)"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <div class="card-title" style="margin-bottom:0">📊 Tabla de Posiciones</div>
@@ -938,7 +933,7 @@ function go(name){
     document.getElementById('pg-'+p).classList.toggle('on', p===name);
   });
   document.querySelectorAll('.ntab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','premios','reglas'][i]===name);
+    t.classList.toggle('on', ['home','form','tabla','predicciones','premios','reglas'][i]===name);
   });
   document.querySelectorAll('.mob-tab').forEach((t,i)=>{
     t.classList.toggle('on', ['home','form','tabla','predicciones','premios','reglas'][i]===name);
@@ -948,7 +943,7 @@ function go(name){
   if(name==='tabla') loadTabla();
   if(name==='predicciones') loadPred();
   if(name==='premios') calcPremios();
-  if(name==='home'){ updHome(); loadHomeResultados(); }
+  if(name==='home'){ updHome(); updHomeInfo(); loadHomeResultados(); }
   window.scrollTo(0,0);
 }
 
@@ -1017,6 +1012,19 @@ function loadHomeResultados(){
   }).catch(()=>{});
 }
 
+function updHomeInfo(){
+  // Mostrar mensaje del organizador (viene de Config C12 via __config__.mensaje)
+  const infoEl = document.getElementById('home-info-content');
+  if(infoEl && cfg.mensaje){
+    infoEl.innerHTML = cfg.mensaje;
+    infoEl.closest('[id]')?.parentElement?.style && (infoEl.style.display = 'block');
+  } else if(infoEl) {
+    // Ocultar la tarjeta si no hay mensaje
+    const card = infoEl.closest('.info-card');
+    if(card) card.style.display = 'none';
+  }
+}
+
 function updHome(){
   const active = participants.filter(p=>p.activo==='ACTIVO');
   document.getElementById('st-part').textContent = active.length||'0';
@@ -1024,7 +1032,14 @@ function updHome(){
   document.getElementById('st-bolsa').textContent =
     bolsa>=1250000 ? '$'+(bolsa/1250000).toFixed(1)+'M' : '$'+bolsa.toLocaleString('es-CO');
 
-  // Update mini tabla
+  // Tabla mini: solo visible si ya empezó el mundial o cfg.visible=true
+  const tablaOpenTime = new Date('2026-06-11T20:00:00Z');
+  const tablaAbierta  = new Date() >= tablaOpenTime || cfg.visible;
+  const tablaMiniWrap = document.getElementById('home-tabla-mini-wrap');
+  if(tablaMiniWrap) tablaMiniWrap.style.display = tablaAbierta ? 'block' : 'none';
+
+  if(!tablaAbierta) return; // no llenar la tabla si está bloqueada
+
   const sorted = [...active].sort((a,b)=>((b.ptsGrupos||0)+(b.ptsElim||0))-((a.ptsGrupos||0)+(a.ptsElim||0)));
   const tbody = document.getElementById('home-tabla-body');
   if(tbody && sorted.length > 0){
@@ -1042,103 +1057,8 @@ function updHome(){
   } else if(tbody) {
     tbody.innerHTML = '<tr><td colspan="3" style="padding:20px;text-align:center;color:var(--text-dim);font-size:.83rem;">Aún no hay participantes activos</td></tr>';
   }
-
-  if(active.length > 0) calcStatsDia(active);
 }
 
-function calcStatsDia(active){
-  if(!active || active.length === 0) return;
-  const wrap = document.getElementById('stats-dia-wrap');
-  const grid = document.getElementById('stats-dia-grid');
-  if(!wrap || !grid) return;
-
-  // Líder actual
-  const sorted = [...active].sort((a,b)=>((b.ptsGrupos||0)+(b.ptsElim||0))-((a.ptsGrupos||0)+(a.ptsElim||0)));
-  const lider = sorted[0];
-  const liderPts = (lider.ptsGrupos||0)+(lider.ptsElim||0);
-
-  // Resultado más predicho en todos los partidos de grupos
-  const marcadores = {};
-  active.forEach(p => {
-    const scores = p.data?.scores || {};
-    Object.values(scores).forEach(grp => {
-      (grp||[]).forEach(m => {
-        if(m && m.t1!=='' && m.t2!==''){
-          const key = `${m.t1}-${m.t2}`;
-          marcadores[key] = (marcadores[key]||0) + 1;
-        }
-      });
-    });
-  });
-  const masComun = Object.entries(marcadores).sort((a,b)=>b[1]-a[1])[0];
-  const menosComun = Object.entries(marcadores).filter(([,v])=>v===1)[0];
-
-  // Goleador más predicho
-  const goleadores = {};
-  active.forEach(p => {
-    const g = p.data?.questions?.goleador;
-    if(g) goleadores[g] = (goleadores[g]||0)+1;
-  });
-  const topGoleador = Object.entries(goleadores).sort((a,b)=>b[1]-a[1])[0];
-
-  // Campeón más predicho
-  const campeones = {};
-  active.forEach(p => {
-    const c = p.data?.elim?.final?.[0]?.win;
-    if(c) campeones[c] = (campeones[c]||0)+1;
-  });
-  const topCampeon = Object.entries(campeones).sort((a,b)=>b[1]-a[1])[0];
-
-  const cards = [];
-
-  if(liderPts > 0){
-    cards.push(`<div class="card" style="padding:12px">
-      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Líder actual</div>
-      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lider.nombre}</div>
-      <div style="font-family:'DM Mono',monospace;color:var(--gold);font-size:1.1rem;font-weight:700">${liderPts} pts</div>
-    </div>`);
-  }
-
-  if(masComun){
-    cards.push(`<div class="card" style="padding:12px">
-      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Marcador más predicho</div>
-      <div style="font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text)">${masComun[0]}</div>
-      <div style="font-size:.72rem;color:var(--text-dim)">${masComun[1]} persona${masComun[1]>1?'s':''}</div>
-    </div>`);
-  }
-
-  if(topCampeon){
-    cards.push(`<div class="card" style="padding:12px">
-      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Campeón más predicho</div>
-      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${topCampeon[0]}</div>
-      <div style="font-size:.72rem;color:var(--text-dim)">${topCampeon[1]} persona${topCampeon[1]>1?'s':''}</div>
-    </div>`);
-  }
-
-  if(menosComun){
-    cards.push(`<div class="card" style="padding:12px">
-      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Marcador más original</div>
-      <div style="font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text)">${menosComun[0]}</div>
-      <div style="font-size:.72rem;color:var(--text-dim)">Solo 1 persona</div>
-    </div>`);
-  }
-
-  if(topGoleador && cards.length < 4){
-    cards.push(`<div class="card" style="padding:12px">
-      <div style="font-size:.6rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase">Equipo del goleador</div>
-      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${topGoleador[0]}</div>
-      <div style="font-size:.72rem;color:var(--text-dim)">${topGoleador[1]} voto${topGoleador[1]>1?'s':''}</div>
-    </div>`);
-  }
-
-  if(cards.length > 0){
-    // Limit to 4 cards, show stats in right column, hide grupos
-    grid.innerHTML = cards.slice(0,4).join('');
-    wrap.style.display = 'block';
-    const gruposCard = document.getElementById('home-grupos-card');
-    if(gruposCard) gruposCard.style.display = 'none';
-  }
-}
 
 // ═══════════════════════════════ FORM ═══════════════════════════════
 function buildGroupsForm(){
@@ -1924,6 +1844,7 @@ async function loadTabla(force=false){
         cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
         cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
         cfg.visible = cfgRow.activo !== 'NO';
+        cfg.mensaje = cfgRow.mensaje || '';
       }
       participants = d.filter(p=>p.id!=='__config__');
     }
@@ -2069,7 +1990,7 @@ function renderPredContent(){
         <div style="font-size:.88rem;color:var(--text-dim);max-width:360px;margin:0 auto 20px">
           Las predicciones se publicarán automáticamente cuando empiece el Mundial (11 de junio).
         </div>
-        <button class="btn btn-out btn-sm" onclick="loadPred()">↻ Recargar</button>
+        <button class="btn btn-out btn-sm" onclick="loadPred(true)">↻ Recargar</button>
       </div>`;
     return;
   }
@@ -2199,7 +2120,15 @@ function renderPredLlave(active){
 }
 
 
-async function loadPred(){
+let _predLoaded = false;
+async function loadPred(force=false){
+  // Si ya están cargadas y visibles, solo re-renderizar sin hacer llamada a la red
+  if(_predLoaded && !force && cfg.visible){
+    document.getElementById('pred-loading').style.display='none';
+    renderPredContent();
+    return;
+  }
+
   document.getElementById('pred-loading').style.display='block';
   document.getElementById('pred-content').innerHTML='';
   document.getElementById('pred-status').textContent='';
@@ -2216,15 +2145,15 @@ async function loadPred(){
         cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
         cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
         cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
+        cfg.mensaje = cfgRow.mensaje || '';
       }
-      // Si no hay fila __config__ es que el Sheet no tiene Config — mostramos igualmente
       else { cfg.visible = true; }
       participants = d.filter(p=>p.id!=='__config__');
+      _predLoaded = true;
       applyFormState();
     }
   } catch(e){
     console.log('loadPred error:', e);
-    // NO forzar cfg.visible = true aquí — si falla la red, mejor mostrar error claro
   }
   document.getElementById('pred-loading').style.display='none';
   renderPredContent();
@@ -2499,9 +2428,11 @@ document.addEventListener('DOMContentLoaded',()=>{
         cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
         cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
         cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
+        cfg.mensaje = cfgRow.mensaje || '';
       }
       participants = d.filter(p=>p.id!=='__config__');
       updHome();
+      updHomeInfo();
       applyFormState();
     }
   }).catch(()=>{});
