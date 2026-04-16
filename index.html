@@ -2306,7 +2306,7 @@ async function toggleActivo(i){
 async function syncParticipant(p){
   // Usar JSONP para poder leer la respuesta del GAS (no-cors no permite leer respuestas)
   try {
-    const payload = JSON.stringify({action:'updatePayment', data:{id:p.id, pagado:p.pagado, activo:p.activo}});
+    const payload = JSON.stringify({action:'updatePayment', adminKey:cfg.password, data:{id:p.id, pagado:p.pagado, activo:p.activo}});
     await new Promise((resolve, reject) => {
       const cbName = 'synccb_' + Date.now();
       const script = document.createElement('script');
@@ -2325,7 +2325,7 @@ async function savePts(i){
   participants[i].ptsElim = parseInt(document.getElementById(`ptse-${i}`).value)||0;
   saveParts();
   try {
-    const payload = JSON.stringify({action:'updatePoints', data:{id:participants[i].id, ptsGrupos:participants[i].ptsGrupos, ptsElim:participants[i].ptsElim}});
+    const payload = JSON.stringify({action:'updatePoints', adminKey:cfg.password, data:{id:participants[i].id, ptsGrupos:participants[i].ptsGrupos, ptsElim:participants[i].ptsElim}});
     await new Promise((resolve) => {
       const cbName = 'ptscb_' + Date.now();
       const script = document.createElement('script');
