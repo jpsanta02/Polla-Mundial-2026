@@ -805,6 +805,83 @@ input[type=number]{-moz-appearance:textfield;}
 </div>
 </div>
 
+<!-- ════════════════════ ADMIN ════════════════════ -->
+<div class="pg" id="pg-admin">
+<div class="wrap">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px">🔧 Panel Admin</div>
+
+  <!-- Login -->
+  <div class="admin-login-wrap" id="adm-login">
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow-lg)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;text-align:center">🔒 Acceso Admin</div>
+      <div class="field" style="margin-bottom:16px">
+        <label>Contraseña</label>
+        <input class="inp" id="adm-pass" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')admLogin()">
+      </div>
+      <button class="btn btn-red" style="width:100%;justify-content:center" onclick="admLogin()">Entrar →</button>
+    </div>
+  </div>
+
+  <!-- Panel -->
+  <div id="adm-panel" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:.85rem;color:var(--text-dim)">Datos en tiempo real desde Google Sheets</div>
+      <button class="btn btn-out btn-sm" onclick="admLogout()">Cerrar sesión</button>
+    </div>
+
+    <!-- Config local del admin -->
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:var(--shadow)">
+      <div class="card-title" style="margin-bottom:14px">⚙️ Preferencias locales</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field">
+          <label>Contraseña admin</label>
+          <input class="inp" id="adm-pass-cfg" type="password" placeholder="Nueva contraseña">
+        </div>
+        <div class="field">
+          <label>Valor inscripción (para premios)</label>
+          <input class="inp" id="adm-ins" type="number" placeholder="125000">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+          <input type="checkbox" id="adm-visible" style="width:16px;height:16px">
+          Forzar tabla/predicciones visibles (anula bloqueo por fecha)
+        </label>
+      </div>
+      <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:14px;background:rgba(0,61,165,0.04);padding:10px 12px;border-radius:8px;border:1px solid var(--border)">
+        ℹ️ Para abrir/cerrar formulario y cambiar mensaje: usa la hoja <strong>Config</strong> en Google Sheets (columna B).
+      </div>
+      <button class="btn btn-blue btn-sm" onclick="saveCfg()">💾 Guardar preferencias</button>
+    </div>
+
+    <!-- Participantes -->
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:var(--shadow)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div class="card-title" style="margin-bottom:0">👥 Participantes <span id="adm-count" style="font-size:.75rem;color:var(--text-dim);font-weight:400"></span></div>
+        <button class="btn btn-out btn-sm" onclick="loadAdmParts()">↻ Recargar</button>
+      </div>
+      <div class="part-list" id="adm-parts">
+        <div style="color:var(--text-dim)">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- Puntos manuales -->
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)">
+      <div class="card-title" style="margin-bottom:6px">🎯 Puntos manuales</div>
+      <div style="font-size:.78rem;color:var(--text-dim);margin-bottom:16px">Los puntos se calculan automáticamente desde el menú del Sheet. Usa esto solo para correcciones.</div>
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 90px;gap:8px;padding:6px 0;border-bottom:2px solid var(--border);margin-bottom:4px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase">Participante</div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;text-align:center">Pts Grupos</div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;text-align:center">Pts Elim</div>
+        <div></div>
+      </div>
+      <div id="adm-pts">
+        <div style="color:var(--text-dim);font-size:.88rem">Cargando...</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 
 </main>
 
@@ -877,29 +954,44 @@ const ELIM_ROUNDS = [
 const ALL_TEAMS = Object.values(GROUPS).flat();
 
 // ═══════════════════════════════ CONFIG ═══════════════════════════════
-let cfg = JSON.parse(localStorage.getItem('polla_cfg')||'{}');
-cfg.password = cfg.password||'mundial2026';
-cfg.inscripcion = cfg.inscripcion||125000;
+// Fuente de verdad: SIEMPRE el Sheet. Sin localStorage para estado de polla.
+// Solo se persiste localmente la contraseña y el valor de inscripción (preferencias del admin).
+const _admPrefs = (() => { try { return JSON.parse(localStorage.getItem('polla_adm')||'{}'); } catch(e){ return {}; } })();
 
-cfg.closed = cfg.closed||false;
-cfg.visible = cfg.visible||false;
-cfg.grupos_abierto = cfg.grupos_abierto!==undefined ? cfg.grupos_abierto : true;
-cfg.eliminatoria_abierta = cfg.eliminatoria_abierta||false;
-cfg.divisiones_visibles = cfg.divisiones_visibles||false;
+let cfg = {
+  password:             _admPrefs.password    || 'mundial2026',
+  inscripcion:          _admPrefs.inscripcion  || 125000,
+  // Las flags de abajo las sobreescribe el Sheet en cada carga:
+  visible:              false,
+  grupos_abierto:       false,   // arranca cerrado hasta confirmar con el Sheet
+  eliminatoria_abierta: false,
+  divisiones_visibles:  false,
+  mensaje:              '',
+};
 
 function saveCfg(){
-  cfg.password = document.getElementById('adm-pass-cfg')?.value||cfg.password;
-  cfg.inscripcion = parseInt(document.getElementById('adm-ins')?.value)||cfg.inscripcion;
-  cfg.closed = document.getElementById('adm-closed')?.checked||false;
-  cfg.visible = document.getElementById('adm-visible')?.checked||false;
-  localStorage.setItem('polla_cfg',JSON.stringify(cfg));
+  // Solo persiste preferencias locales del admin (contraseña e inscripción)
+  cfg.password    = document.getElementById('adm-pass-cfg')?.value || cfg.password;
+  cfg.inscripcion = parseInt(document.getElementById('adm-ins')?.value) || cfg.inscripcion;
+  localStorage.setItem('polla_adm', JSON.stringify({ password: cfg.password, inscripcion: cfg.inscripcion }));
+  toast('Preferencias guardadas');
+}
+
+// Aplica un objeto cfgRow proveniente del Sheet a cfg en memoria
+function applyCfgRow(cfgRow) {
+  if (!cfgRow) return;
+  cfg.visible              = cfgRow.activo              !== 'NO';
+  cfg.grupos_abierto       = cfgRow.grupos_abierto      !== 'NO';
+  cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
+  cfg.divisiones_visibles  = cfgRow.divisiones_visibles  === 'SI';
+  cfg.mensaje              = cfgRow.mensaje || '';
 }
 
 let participants = [];
 function saveParts(){ /* no-op: Sheet es la fuente de verdad */ }
 
 // ═══════════════════════════════ NAV ═══════════════════════════════
-const PAGES = ['home','form','tabla','predicciones','premios','reglas'];
+const PAGES = ['home','form','tabla','predicciones','premios','reglas','admin'];
 function applyFormState(){
   const banner = document.getElementById('form-closed-banner');
   const content = document.getElementById('form-content');
@@ -909,7 +1001,8 @@ function applyFormState(){
   const closeTime = new Date('2026-06-11T20:00:00Z');
   const timeClosed = new Date() >= closeTime;
 
-  if(!cfg.grupos_abierto || timeClosed || cfg.closed){
+  // Cerrado si: el Sheet dice grupos_abierto=NO, o ya pasó la hora de cierre automático
+  if(!cfg.grupos_abierto || timeClosed){
     banner.style.display = 'block';
     banner.querySelector('.closed-banner div:last-child').innerHTML =
       !cfg.grupos_abierto
@@ -930,15 +1023,14 @@ function togMenu(){
 
 function go(name){
   PAGES.forEach(p=>{
-    document.getElementById('pg-'+p).classList.toggle('on', p===name);
+    const el = document.getElementById('pg-'+p);
+    if(el) el.classList.toggle('on', p===name);
   });
-  document.querySelectorAll('.ntab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','predicciones','premios','reglas'][i]===name);
+  // Match tabs by their onclick attribute text — avoids hardcoded index dependency
+  document.querySelectorAll('.ntab,.mob-tab').forEach(t=>{
+    const match = (t.getAttribute('onclick')||'').includes("'"+name+"'");
+    t.classList.toggle('on', match);
   });
-  document.querySelectorAll('.mob-tab').forEach((t,i)=>{
-    t.classList.toggle('on', ['home','form','tabla','predicciones','premios','reglas'][i]===name);
-  });
-  // close mobile menu after navigation
   document.getElementById('mob-menu').classList.remove('open');
   if(name==='tabla') loadTabla();
   if(name==='predicciones') loadPred();
@@ -1015,12 +1107,13 @@ function loadHomeResultados(){
 function updHomeInfo(){
   // Mostrar mensaje del organizador (viene de Config C12 via __config__.mensaje)
   const infoEl = document.getElementById('home-info-content');
-  if(infoEl && cfg.mensaje){
-    infoEl.innerHTML = cfg.mensaje;
-    infoEl.closest('[id]')?.parentElement?.style && (infoEl.style.display = 'block');
-  } else if(infoEl) {
-    // Ocultar la tarjeta si no hay mensaje
-    const card = infoEl.closest('.info-card');
+  if(!infoEl) return;
+  const card = infoEl.closest('.info-card');
+  const msg = (cfg.mensaje || '').trim();
+  if(msg){
+    infoEl.innerHTML = msg;
+    if(card) card.style.display = 'block';
+  } else {
     if(card) card.style.display = 'none';
   }
 }
@@ -1714,7 +1807,7 @@ function collectData(){
 let _isSubmitting = false;
 async function submitForm(){
   if(_isSubmitting){ toast('Ya se está enviando, espera...','err'); return; }
-  if(cfg.closed){ toast('El formulario está cerrado','err'); return; }
+  if(!cfg.grupos_abierto){ toast('El formulario está cerrado','err'); return; }
   const nom = document.getElementById('f-nom').value.trim();
   const wa = document.getElementById('f-wa').value.trim();
   if(!nom||!wa){ toast('Completa nombre y WhatsApp','err'); return; }
@@ -1839,13 +1932,7 @@ async function loadTabla(force=false){
   try {
     const d = await jsonpFetch(GS_URL+'?action=getParticipantsLight');
     if(Array.isArray(d)){
-      const cfgRow = d.find(p=>p.id==='__config__');
-      if(cfgRow){
-        cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
-        cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
-        cfg.visible = cfgRow.activo !== 'NO';
-        cfg.mensaje = cfgRow.mensaje || '';
-      }
+      applyCfgRow(d.find(p=>p.id==='__config__'));
       participants = d.filter(p=>p.id!=='__config__');
     }
   } catch(e){ console.log('tabla error', e); }
@@ -2139,15 +2226,7 @@ async function loadPred(force=false){
       loadEliminatoriaTeams()
     ]);
     if(Array.isArray(d)){
-      const cfgRow = d.find(p=>p.id==='__config__');
-      if(cfgRow){
-        cfg.visible = cfgRow.activo !== 'NO';
-        cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
-        cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
-        cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
-        cfg.mensaje = cfgRow.mensaje || '';
-      }
-      else { cfg.visible = true; }
+      applyCfgRow(d.find(p=>p.id==='__config__'));
       participants = d.filter(p=>p.id!=='__config__');
       _predLoaded = true;
       applyFormState();
@@ -2218,11 +2297,14 @@ function calcPremios(){
 
 // ═══════════════════════════════ ADMIN ═══════════════════════════════
 function admLogin(){
-  if(document.getElementById('adm-pass').value===cfg.password){
+  if(document.getElementById('adm-pass').value === cfg.password){
     document.getElementById('adm-login').style.display='none';
     document.getElementById('adm-panel').style.display='block';
     loadAdmPanel();
-  } else { toast('Contraseña incorrecta','err'); }
+  } else {
+    toast('Contraseña incorrecta','err');
+    document.getElementById('adm-pass').value='';
+  }
 }
 function admLogout(){
   document.getElementById('adm-login').style.display='block';
@@ -2233,7 +2315,7 @@ function admLogout(){
 function loadAdmPanel(){
   document.getElementById('adm-pass-cfg').value = cfg.password;
   document.getElementById('adm-ins').value = cfg.inscripcion;
-  document.getElementById('adm-closed').checked = cfg.closed;
+  // cfg.visible viene del Sheet (ya cargado en init), refleja el estado real
   document.getElementById('adm-visible').checked = cfg.visible;
   loadAdmParts();
 }
@@ -2241,8 +2323,11 @@ function loadAdmPanel(){
 async function loadAdmParts(){
   try {
     const d = await jsonpFetch(GS_URL+'?action=getParticipants');
-    if(Array.isArray(d)){participants=d.filter(p=>p.id!=='__config__'); saveParts();}
-  } catch(e){}
+    if(Array.isArray(d)){
+      applyCfgRow(d.find(p=>p.id==='__config__'));
+      participants = d.filter(p=>p.id!=='__config__');
+    }
+  } catch(e){ console.log('loadAdmParts error', e); }
 
   const all = participants.filter(p=>p.nombre);
   document.getElementById('adm-count').textContent = `(${all.length} registros)`;
@@ -2255,14 +2340,13 @@ async function loadAdmParts(){
         <div class="part-name">${p.nombre}</div>
         <div class="part-meta">
           📱 ${p.whatsapp}<br>
-          📧 ${p.email||'—'} · ${p.ciudad||'—'}<br>
-          🕐 ${p.timestamp ? new Date(p.timestamp).toLocaleString('es-CO') : '—'}<br>
-          📋 Fase: <strong>${p.phase||'grupos'}</strong> · Envíos: ${p.submissions||1}
+          📧 ${p.email||'—'}<br>
+          🕐 ${p.timestamp||'—'}<br>
+          Estado Sheet: <strong>${p.activo||'PENDIENTE'}</strong>
         </div>
         <div class="part-actions">
           <span class="tag ${p.pagado==='SI'?'tag-green':'tag-red'}">${p.pagado==='SI'?'✓ Pagó':'✗ Sin pago'}</span>
           <span class="tag ${p.activo==='ACTIVO'?'tag-gold':'tag-dim'}">${p.activo||'PENDIENTE'}</span>
-          ${p.division?`<span class="tag tag-blue">Div. ${p.division}</span>`:''}
           <button class="btn btn-sm ${p.pagado==='SI'?'btn-red':'btn-green'}" onclick="togglePago(${i})">
             ${p.pagado==='SI'?'Desmarcar pago':'✓ Marcar pago'}
           </button>
@@ -2288,7 +2372,6 @@ async function loadAdmParts(){
 
 async function togglePago(i){
   participants[i].pagado = participants[i].pagado==='SI'?'NO':'SI';
-  saveParts();
   await syncParticipant(participants[i]);
   loadAdmParts();
   toast('Pago actualizado');
@@ -2296,7 +2379,6 @@ async function togglePago(i){
 
 async function toggleActivo(i){
   participants[i].activo = participants[i].activo==='ACTIVO'?'PENDIENTE':'ACTIVO';
-  saveParts();
   await syncParticipant(participants[i]);
   loadAdmParts();
   updHome();
@@ -2417,23 +2499,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildElimForm();
   if(document.getElementById('adm-ins')) document.getElementById('adm-ins').value = cfg.inscripcion;
   document.getElementById('blk-A')?.classList.add('open');
-  applyFormState(); // aplica estado inicial
-  setTablaView('grupos'); // inicia tabla grupos
+  // No renderizamos nada de estado antes de tener datos del Sheet.
+  // applyFormState() aquí mostraría el form cerrado por defecto (cfg.grupos_abierto=false)
+  // hasta que llegue la respuesta — es el comportamiento correcto.
+  applyFormState();
+  setTablaView('grupos');
+
+  // Acceso al panel admin via hash: ir a la URL con #admin
+  if(window.location.hash === '#admin') go('admin');
 
   jsonpFetch(GS_URL+'?action=getParticipantsLight').then(d=>{
-    if(Array.isArray(d)){
-      const cfgRow = d.find(p=>p.id==='__config__');
-      if(cfgRow){
-        cfg.visible = cfgRow.activo!=='NO';
-        cfg.grupos_abierto = cfgRow.grupos_abierto !== 'NO';
-        cfg.eliminatoria_abierta = cfgRow.eliminatoria_abierta === 'SI';
-        cfg.divisiones_visibles = cfgRow.divisiones_visibles === 'SI';
-        cfg.mensaje = cfgRow.mensaje || '';
-      }
-      participants = d.filter(p=>p.id!=='__config__');
-      updHome();
-      updHomeInfo();
-      applyFormState();
+    if(!Array.isArray(d)) return;
+    const cfgRow = d.find(p=>p.id==='__config__');
+    applyCfgRow(cfgRow);                              // aplica Sheet → cfg en memoria
+    participants = d.filter(p=>p.id!=='__config__');
+    updHome();
+    updHomeInfo();
+    applyFormState();
+    // Actualiza el panel admin si estaba abierto
+    if(document.getElementById('adm-panel')?.style.display !== 'none'){
+      document.getElementById('adm-visible').checked = cfg.visible;
     }
   }).catch(()=>{});
 });
