@@ -482,8 +482,8 @@ input[type=number]{-moz-appearance:textfield;}
           </div>
         </div>
 
-        <!-- Información Card — mensaje del organizador (Config C12) -->
-        <div class="info-card" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;display:none">
+        <!-- Información Card — mensaje del organizador (Config B12) -->
+        <div id="info-card" class="info-card" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;display:none">
           <div style="display:flex;align-items:center;margin-bottom:12px;">
             <div class="card-title" style="margin-bottom:0">📣 Información</div>
           </div>
@@ -1105,16 +1105,15 @@ function loadHomeResultados(){
 }
 
 function updHomeInfo(){
-  // Mostrar mensaje del organizador (viene de Config C12 via __config__.mensaje)
+  const card  = document.getElementById('info-card');
   const infoEl = document.getElementById('home-info-content');
-  if(!infoEl) return;
-  const card = infoEl.closest('.info-card');
+  if(!card || !infoEl) return;
   const msg = (cfg.mensaje || '').trim();
   if(msg){
     infoEl.innerHTML = msg;
-    if(card) card.style.display = 'block';
+    card.style.display = 'block';
   } else {
-    if(card) card.style.display = 'none';
+    card.style.display = 'none';
   }
 }
 
@@ -2550,6 +2549,23 @@ document.addEventListener('DOMContentLoaded',()=>{
       document.getElementById('adm-visible').checked = cfg.visible;
     }
   }).catch(()=>{});
+
+  // ── Auto-refresh cada 30s: sincroniza cfg y participants con el Sheet en segundo plano ──
+  setInterval(()=>{
+    jsonpFetch(GS_URL+'?action=getParticipantsLight').then(d=>{
+      if(!Array.isArray(d)) return;
+      applyCfgRow(d.find(p=>p.id==='__config__'));
+      participants = d.filter(p=>p.id!=='__config__');
+      updHome();
+      updHomeInfo();
+      applyFormState();
+      // Si la tabla está visible, refrescarla también
+      if(document.getElementById('pg-tabla')?.classList.contains('on')){
+        _tablaLoaded = false;
+        loadTabla();
+      }
+    }).catch(()=>{});
+  }, 30000);
 });
 </script>
 </body>
