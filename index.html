@@ -1650,11 +1650,40 @@ function togGrp(g){ document.getElementById('blk-'+g).classList.toggle('open'); 
 function showPhase(){
   const p = document.getElementById('phase-sel').value;
   document.getElementById('ph-grupos').style.display = p==='grupos'?'block':'none';
-  document.getElementById('ph-elim').style.display = p==='elim'?'block':'none';
-  // Hide fixed "Enviar mi Polla" bar when on eliminatoria
+
+  // ── Bloqueo eliminatoria hasta que admin active cfg.eliminatoria_abierta ──
+  if(p==='elim'){
+    if(!cfg.eliminatoria_abierta){
+      // Mostrar mensaje de cierre en lugar del formulario
+      document.getElementById('ph-elim').style.display = 'block';
+      const elVerify = document.getElementById('elim-verify');
+      const elWrap   = document.getElementById('elim-llave-wrap');
+      if(elVerify) elVerify.style.display = 'none';
+      if(elWrap)   elWrap.style.display   = 'none';
+      // Mostrar banner de cerrado
+      let elimBanner = document.getElementById('elim-closed-banner');
+      if(!elimBanner){
+        elimBanner = document.createElement('div');
+        elimBanner.id = 'elim-closed-banner';
+        elimBanner.style.cssText = 'max-width:480px;margin:40px auto;text-align:center;padding:32px;background:var(--card-bg,#1a1a2e);border-radius:12px;border:1.5px solid var(--border,#333)';
+        elimBanner.innerHTML = '<div style="font-size:2rem;margin-bottom:12px">🔒</div><div style="font-weight:700;font-size:1.1rem;margin-bottom:8px">Eliminatoria no disponible aún</div><div style="color:var(--text-dim,#888);font-size:.9rem">El formulario de eliminatoria estará disponible al terminar la fase de grupos (aproximadamente el 28 de junio).</div>';
+        document.getElementById('ph-elim').prepend(elimBanner);
+      }
+      elimBanner.style.display = 'block';
+    } else {
+      // Eliminatoria abierta — flujo normal
+      const elimBanner = document.getElementById('elim-closed-banner');
+      if(elimBanner) elimBanner.style.display = 'none';
+      document.getElementById('ph-elim').style.display = 'block';
+      loadEliminatoriaTeams();
+    }
+  } else {
+    document.getElementById('ph-elim').style.display = 'none';
+  }
+
+  // Barra inferior
   const subBar = document.getElementById('sub-bar');
   if(subBar) subBar.style.display = p==='elim' ? 'none' : 'block';
-  if(p==='elim') loadEliminatoriaTeams();
 }
 
 function updProg(){
