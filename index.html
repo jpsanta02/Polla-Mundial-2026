@@ -452,7 +452,7 @@ input[type=number]{-moz-appearance:textfield;}
 
         <!-- Cuenta Regresiva -->
         <div class="countdown-wrap" id="countdown-wrap">
-          <div class="countdown-label">⏱ Tiempo para el primer partido</div>
+          <div class="countdown-label">🔒 La polla se cierra en</div>
           <div class="countdown-units" id="countdown-units">
             <div class="cd-unit"><div class="cd-num" id="cd-dias">--</div><div class="cd-lbl">Días</div></div>
             <div class="cd-sep">:</div>
@@ -491,7 +491,6 @@ input[type=number]{-moz-appearance:textfield;}
       <div>
         <!-- Próximos Partidos Card -->
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:5px;background:var(--rainbow)"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
             <div class="card-title" style="margin-bottom:0">⚽ Resultados</div>
             <span class="tag tag-blue">Fase de Grupos</span>
@@ -523,7 +522,6 @@ input[type=number]{-moz-appearance:textfield;}
       <div>
         <!-- Tabla de Posiciones Mini -->
         <div id="home-tabla-mini-wrap" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:5px;background:var(--rainbow)"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <div class="card-title" style="margin-bottom:0">📊 Tabla de Posiciones</div>
             <button class="btn btn-out btn-sm" onclick="go('tabla')">Ver tabla completa</button>
@@ -546,7 +544,6 @@ input[type=number]{-moz-appearance:textfield;}
 
         <!-- Groups mini -->
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:0 12px 35px rgba(0,0,0,0.07);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:5px;background:var(--rainbow)"></div>
           <div class="card-title">⚽ Los 12 Grupos</div>
           <div class="groups-grid" id="home-groups"></div>
         </div>
@@ -694,7 +691,6 @@ input[type=number]{-moz-appearance:textfield;}
           <th id="th-grupos">Grupos</th>
           <th id="th-elim">Elim.</th>
           <th>Total</th>
-          <th class="bar-wrap"></th>
         </tr></thead>
         <tbody id="tabla-body"></tbody>
       </table>
@@ -818,13 +814,17 @@ input[type=number]{-moz-appearance:textfield;}
   <div class="regla-card">
     <div class="regla-title">🏅 Premios</div>
     <div style="font-size:.87rem;color:var(--text-mid);line-height:2">
+      <strong style="color:var(--text)">Premios por jornada de grupos</strong> (ganador único de cada fecha):<br>
       · <strong style="color:var(--gold2)">3%</strong> — Mejor de la Fecha 1 (11–17 jun)<br>
       · <strong style="color:var(--gold2)">3%</strong> — Mejor de la Fecha 2 (18–23 jun)<br>
-      · <strong style="color:var(--gold2)">3%</strong> — Mejor de la Fecha 3 (24–27 jun)<br>
+      · <strong style="color:var(--gold2)">3%</strong> — Mejor de la Fecha 3 (24–27 jun)<br><br>
+      <strong style="color:var(--text)">Premios por clasificación</strong> (50% 1°, 30% 2°, 20% 3°):<br>
       · <strong style="color:var(--red)">21%</strong> — Fase de Grupos<br>
       · <strong style="color:var(--blue)">27%</strong> — Eliminatoria<br>
-      · <strong style="color:var(--text)">33%</strong> — Global<br><br>
-      Clasificación: <strong>50%</strong> al 1°, <strong>30%</strong> al 2°, <strong>20%</strong> al 3°. Total distribuido: <strong style="color:var(--red)">90%</strong> de la bolsa.
+      · <strong style="color:var(--text)">33%</strong> — Global (Grupos + Eliminatoria)<br><br>
+      <strong style="color:var(--text)">Total distribuido:</strong> 3%×3 + 21% + 27% + 33% = <strong style="color:var(--red)">90%</strong> de la bolsa.<br>
+      El <strong>10%</strong> restante cubre gastos de organización.<br><br>
+      En empate en jornadas el premio se divide en partes iguales. En empate en clasificación, los premios del puesto se suman y dividen entre los empatados.
     </div>
   </div>
 </div>
@@ -1930,10 +1930,13 @@ function setTablaView(v){
     if(el) el.className = 'btn btn-sm' + (x===v ? ' btn-red' : ' btn-out');
   });
   // Show/hide columns
+  // grupos: muestra Grupos, oculta Elim
+  // elim:   oculta Grupos, muestra Elim
+  // global: oculta ambos (solo muestra Total = suma)
   const thG = document.getElementById('th-grupos');
   const thE = document.getElementById('th-elim');
-  if(thG) thG.style.display = v==='elim' ? 'none' : '';
-  if(thE) thE.style.display = v==='grupos' ? 'none' : '';
+  if(thG) thG.style.display = (v==='elim' || v==='global') ? 'none' : '';
+  if(thE) thE.style.display = (v==='grupos' || v==='global') ? 'none' : '';
   renderTabla();
 }
 
@@ -2030,14 +2033,13 @@ function renderJornadas(){
         <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
           <div style="display:flex;align-items:center;gap:6px">
             <span style="font-size:.9rem">${medals[i]}</span>
-            <span style="font-size:.8rem;font-weight:600;color:var(--text)">${p.nombre.split(' ')[0]}</span>
+            <span style="font-size:.8rem;font-weight:600;color:var(--text)">${p.nombre}</span>
           </div>
           <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--gold2);font-weight:700">${p.pts} pts</span>
         </div>`).join('')
       : `<div style="font-size:.75rem;color:var(--text-dim);font-style:italic;padding:6px 0">Sin resultados aún</div>`;
 
     return `<div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--rainbow)"></div>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
         <div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:900;letter-spacing:1px;color:var(--text)">${j.label}</div>
@@ -2089,22 +2091,21 @@ function renderTabla(){
   const maxP = data[0] ? getPts(data[0]) : 1;
   const tbody = document.getElementById('tabla-body');
   if(data.length===0){
-    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-dim)">Aún no hay participantes activos</td></tr>';
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-dim)">Aún no hay participantes activos</td></tr>';
     return;
   }
   tbody.innerHTML = data.map((p,i)=>{
     const g = p.ptsGrupos||0, e = p.ptsElim||0, tot = g+e;
     const pts = getPts(p);
-    const pct = maxP>0 ? pts/maxP*100 : 0;
-    const tdG = tablaView!=='elim'  ? `<td><span class="r-pts">${g}</span></td>` : '';
-    const tdE = tablaView!=='grupos' ? `<td><span class="r-pts">${e}</span></td>` : '';
+    // En global: solo mostrar Total (grupos+elim). En grupos/elim: mostrar el pts correspondiente.
+    const tdG = tablaView==='grupos' ? `<td><span class="r-pts">${g}</span></td>` : '';
+    const tdE = tablaView==='elim'   ? `<td><span class="r-pts">${e}</span></td>` : '';
     const totPts = tablaView==='global' ? tot : pts;
     return `<tr>
       <td><span class="r-num">${i+1}</span></td>
       <td><div style="font-weight:600;color:var(--text)">${p.nombre}</div></td>
       ${tdG}${tdE}
       <td><span class="r-pts" style="font-size:1rem">${totPts}</span></td>
-      <td class="bar-wrap"><div class="bar" style="width:${pct}%"></div></td>
     </tr>`;
   }).join('');
 }
@@ -2309,17 +2310,17 @@ function calcPremios(){
 
   const renderCat = (icon, name, sub, total, color, showPodium=true) => `
     <div class="card">
-      <div class="card-title" style="color:${color};flex-direction:column;align-items:flex-start;gap:3px">
+      <div class="card-title" style="color:var(--text);flex-direction:column;align-items:flex-start;gap:3px">
         <span>${icon} ${name}</span>
-        <span style="font-size:.72rem;color:var(--text-dim);font-weight:400;letter-spacing:1px">${sub}</span>
+        <span style="font-size:.72rem;color:var(--gold2);font-weight:600;letter-spacing:1px">${sub}</span>
       </div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;color:${color};margin-bottom:12px">${fmt(total)}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;color:var(--text);font-weight:900;margin-bottom:12px">${fmt(total)}</div>
       ${showPodium ? [['🥇 1° lugar',0.50],['🥈 2° lugar',0.30],['🥉 3° lugar',0.20]].map(([l,pct])=>`
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border2);font-size:.85rem">
-          <span style="color:var(--text-dim)">${l}</span>
-          <span style="font-family:'DM Mono',monospace;color:var(--gold)">${fmt(total*pct)}</span>
+          <span style="color:var(--gold2);font-weight:600">${l}</span>
+          <span style="font-family:'DM Mono',monospace;color:var(--text);font-weight:700">${fmt(total*pct)}</span>
         </div>`).join('') :
-        `<div style="padding:5px 0;font-size:.85rem;color:var(--text-dim)">Todo el premio es para el mejor de la fecha</div>`}
+        `<div style="padding:5px 0;font-size:.85rem;color:var(--gold2);font-weight:600">Todo el premio es para el mejor de la fecha</div>`}
     </div>`;
 
   document.getElementById('prizes-grid').innerHTML = `
@@ -2626,7 +2627,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   }).catch(()=>{});
 
-  // ── Auto-refresh cada 30s: sincroniza cfg y participants con el Sheet en segundo plano ──
+  // ── Auto-refresh cada 2 horas: sincroniza cfg y participants con el Sheet en segundo plano ──
   setInterval(()=>{
     jsonpFetch(GS_URL+'?action=getParticipantsLight').then(d=>{
       if(!Array.isArray(d)) return;
@@ -2641,7 +2642,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         loadTabla();
       }
     }).catch(()=>{});
-  }, 30000);
+  }, 7200000);
 });
 </script>
 </body>
