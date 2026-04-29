@@ -501,9 +501,7 @@ input[type=number]{-moz-appearance:textfield;}
               <!-- Generado por JS -->
             </div>
           </div>
-          <div style="text-align:center;">
-            <button class="btn btn-red" onclick="go('form')" style="width:100%;justify-content:center;padding:12px;">✏️ Ir a Mi Polla</button>
-          </div>
+
         </div>
 
         <!-- Información Card — mensaje del organizador (Config B12) -->
@@ -688,9 +686,14 @@ input[type=number]{-moz-appearance:textfield;}
         <thead><tr>
           <th style="width:44px">#</th>
           <th>Participante</th>
-          <th id="th-grupos">Grupos</th>
-          <th id="th-elim">Elim.</th>
-          <th>Total</th>
+          <th id="th-grupos" style="text-align:center">Grupos</th>
+          <th id="th-f1" style="text-align:center">F1</th>
+          <th id="th-f2" style="text-align:center">F2</th>
+          <th id="th-f3" style="text-align:center">F3</th>
+          <th id="th-elim" style="text-align:center">Elim.</th>
+          <th id="th-global-g" style="text-align:center">Grupos</th>
+          <th id="th-global-e" style="text-align:center">Elim.</th>
+          <th style="text-align:center">Total</th>
         </tr></thead>
         <tbody id="tabla-body"></tbody>
       </table>
@@ -754,11 +757,20 @@ input[type=number]{-moz-appearance:textfield;}
   <div class="regla-card">
     <div class="regla-title">🗓 Formato del juego</div>
     <div style="font-size:.88rem;color:var(--text-mid);line-height:1.9">
-      Dos fases:<br><br>
+      El juego se divide en dos fases:<br><br>
       <strong style="color:var(--blue)">Fase 1 — Grupos</strong> (antes del 11 de junio)<br>
-      Predice los 72 partidos de la fase de grupos, las posiciones finales de los 12 grupos y responde 5 preguntas adicionales.<br><br>
-      <strong style="color:var(--blue)">Fase 2 — Eliminatoria</strong> (antes del 28 de junio)<br>
-      Completa tu llave con los 32 partidos de eliminación directa.<br><br>
+      Cada participante deberá:<br>
+      &nbsp;· Completar el resultado de los 72 partidos de la fase de grupos.<br>
+      &nbsp;· Definir las posiciones finales de los 12 grupos.<br>
+      &nbsp;· Responder 5 preguntas adicionales.<br><br>
+      <strong style="color:var(--blue)">Fase 2 — Eliminatoria</strong> (antes del 29 de junio a las 2:30 p.m.)<br>
+      Cada participante deberá completar su llave con los 32 partidos de eliminación directa.<br>
+      El formulario para esta fase estará habilitado una vez finalicen los partidos <em>Argentina vs. Jordania</em> y <em>Argelia vs. Austria</em>, y permanecerá abierto hasta el lunes 29 de junio a las 2:30 p.m.<br><br>
+      <div style="background:rgba(240,180,41,0.08);border:1.5px solid rgba(240,180,41,0.3);border-radius:8px;padding:12px 16px;margin-top:4px">
+        <strong style="color:var(--text)">⚠️ Muy Importante ⚠️</strong><br>
+        Con el fin de garantizar que todos los participantes cuenten con tiempo suficiente para completar esta fase, el formulario estará abierto incluso después de terminado el primer partido de los dieciseisavos de final.<br><br>
+        Esto quiere decir que ese primer partido <strong style="color:var(--text)">"se regala"</strong>: pueden mandar el formulario después de que termine el partido y poner ese resultado ya sabiendo cómo quedó.
+      </div><br>
       <strong style="color:var(--text)">🏆 Sistema de puntuación</strong><br>
       Existen tres tablas:<br>
       &nbsp;· Grupos<br>
@@ -824,7 +836,7 @@ input[type=number]{-moz-appearance:textfield;}
       · <strong style="color:var(--text)">33%</strong> — Global (Grupos + Eliminatoria)<br><br>
       <strong style="color:var(--text)">Total distribuido:</strong> 3%×3 + 21% + 27% + 33% = <strong style="color:var(--red)">90%</strong> de la bolsa.<br>
       El <strong>10%</strong> restante cubre gastos de organización.<br><br>
-      En empate en jornadas el premio se divide en partes iguales. En empate en clasificación, los premios del puesto se suman y dividen entre los empatados.
+      En empate en jornadas el premio se divide en partes iguales entre todos los que empaten. En empate en clasificación, los premios de los puestos empatados se sumarán y se dividirán en partes iguales entre los participantes empatados.
     </div>
   </div>
 </div>
@@ -1026,19 +1038,31 @@ function applyFormState(){
   const closeTime = new Date('2026-06-11T20:00:00Z');
   const timeClosed = new Date() >= closeTime;
 
-  // Cerrado si: el Sheet dice grupos_abierto=NO, o ya pasó la hora de cierre automático
-  if(!cfg.grupos_abierto || timeClosed){
+  // Grupos cerrado si: el Sheet dice grupos_abierto=NO, o ya pasó la hora de cierre automático
+  const gruposCerrado = !cfg.grupos_abierto || timeClosed;
+
+  // Eliminatoria tiene su propio flag independiente
+  // No bloquear el formulario completo si solo eliminatoria está abierta
+  const phase = document.getElementById('phase-sel')?.value || 'grupos';
+
+  if(gruposCerrado && !cfg.eliminatoria_abierta){
+    // Todo cerrado
     banner.style.display = 'block';
     banner.querySelector('.closed-banner div:last-child').innerHTML =
-      !cfg.grupos_abierto
-        ? '<strong>Formulario de grupos cerrado.</strong> El organizador ha cerrado las inscripciones.'
-        : '<strong>El formulario está cerrado.</strong> Las predicciones se publicarán cuando empiece el Mundial.';
+      '<strong>El formulario está cerrado.</strong> Las predicciones se publicarán cuando empiece el Mundial.';
     content.style.display = 'none';
     if(subBar) subBar.style.display = 'none';
+  } else if(gruposCerrado && cfg.eliminatoria_abierta && phase === 'grupos'){
+    // Grupos cerrado pero eliminatoria abierta — mostrar aviso pero no bloquear todo
+    banner.style.display = 'block';
+    banner.querySelector('.closed-banner div:last-child').innerHTML =
+      '<strong>Formulario de grupos cerrado.</strong> Puedes acceder al formulario de <strong>Eliminatoria</strong> desde el selector de fase arriba.';
+    content.style.display = 'block';
+    if(subBar) subBar.style.display = gruposCerrado ? 'none' : 'block';
   } else {
     banner.style.display = 'none';
     content.style.display = 'block';
-    if(subBar) subBar.style.display = 'block';
+    if(subBar) subBar.style.display = phase === 'elim' ? 'none' : 'block';
   }
 }
 
@@ -1145,9 +1169,9 @@ function updHomeInfo(){
 function updHome(){
   const active = participants.filter(p=>p.activo==='ACTIVO');
   document.getElementById('st-part').textContent = active.length||'0';
-  const bolsa = active.length * 112500;
+  const bolsa = active.length * 125000;
   document.getElementById('st-bolsa').textContent =
-    bolsa>=1250000 ? '$'+(bolsa/1250000).toFixed(1)+'M' : '$'+bolsa.toLocaleString('es-CO');
+    bolsa>=1000000 ? '$'+(bolsa/1000000).toFixed(1).replace('.0','')+'M' : '$'+bolsa.toLocaleString('es-CO');
 
   // Tabla mini: solo visible si ya empezó el mundial o cfg.visible=true
   const tablaOpenTime = new Date('2026-06-11T20:00:00Z');
@@ -1860,7 +1884,9 @@ function collectData(){
 let _isSubmitting = false;
 async function submitForm(){
   if(_isSubmitting){ toast('Ya se está enviando, espera...','err'); return; }
-  if(!cfg.grupos_abierto){ toast('El formulario está cerrado','err'); return; }
+  const phase = document.getElementById('phase-sel').value;
+  if(phase === 'grupos' && !cfg.grupos_abierto){ toast('El formulario de grupos está cerrado','err'); return; }
+  if(phase === 'elim' && !cfg.eliminatoria_abierta){ toast('El formulario de eliminatoria está cerrado','err'); return; }
   const nom = document.getElementById('f-nom').value.trim();
   const wa = document.getElementById('f-wa').value.trim();
   if(!nom||!wa){ toast('Completa nombre y WhatsApp','err'); return; }
@@ -1937,14 +1963,18 @@ function setTablaView(v){
     const el = document.getElementById('tab-'+x);
     if(el) el.className = 'btn btn-sm' + (x===v ? ' btn-red' : ' btn-out');
   });
-  // Show/hide columns
-  // grupos: muestra Grupos, oculta Elim
-  // elim:   oculta Grupos, muestra Elim
-  // global: oculta ambos (solo muestra Total = suma)
-  const thG = document.getElementById('th-grupos');
-  const thE = document.getElementById('th-elim');
-  if(thG) thG.style.display = (v==='elim' || v==='global') ? 'none' : '';
-  if(thE) thE.style.display = (v==='grupos' || v==='global') ? 'none' : '';
+  // Column visibility per view:
+  // grupos: Grupos, F1, F2, F3, Total
+  // elim:   Elim., Total
+  // global: Grupos, Elim., Total
+  const show = (id, vis) => { const el=document.getElementById(id); if(el) el.style.display=vis?'':'none'; };
+  show('th-grupos',  v==='grupos');
+  show('th-f1',      v==='grupos');
+  show('th-f2',      v==='grupos');
+  show('th-f3',      v==='grupos');
+  show('th-elim',    v==='elim');
+  show('th-global-g',v==='global');
+  show('th-global-e',v==='global');
   renderTabla();
 }
 
@@ -2033,7 +2063,7 @@ function renderJornadas(){
     const top3 = ranked.slice(0, 3);
     const max = ranked[0]?.pts || 0;
     const ganadores = ranked.filter(p => p.pts === max);
-    const bolsaJ = active.length * 112500 * 0.03;
+    const bolsaJ = active.length * 125000 * 0.03;
     const medals = ['🥇','🥈','🥉'];
 
     const top3HTML = top3.length > 0
@@ -2099,21 +2129,31 @@ function renderTabla(){
   const maxP = data[0] ? getPts(data[0]) : 1;
   const tbody = document.getElementById('tabla-body');
   if(data.length===0){
-    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-dim)">Aún no hay participantes activos</td></tr>';
+    tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-dim)">Aún no hay participantes activos</td></tr>';
     return;
   }
   tbody.innerHTML = data.map((p,i)=>{
-    const g = p.ptsGrupos||0, e = p.ptsElim||0, tot = g+e;
-    const pts = getPts(p);
-    // En global: solo mostrar Total (grupos+elim). En grupos/elim: mostrar el pts correspondiente.
-    const tdG = tablaView==='grupos' ? `<td><span class="r-pts">${g}</span></td>` : '';
-    const tdE = tablaView==='elim'   ? `<td><span class="r-pts">${e}</span></td>` : '';
-    const totPts = tablaView==='global' ? tot : pts;
+    const g = p.ptsGrupos||0, e = p.ptsElim||0;
+    const f1=p.ptsJ1||0, f2=p.ptsJ2||0, f3=p.ptsJ3||0;
+    const tot = g+e;
+    let cols = '';
+    if(tablaView==='grupos'){
+      cols = `<td style="text-align:center"><span class="r-pts">${g}</span></td>
+              <td style="text-align:center;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.8rem">${f1}</td>
+              <td style="text-align:center;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.8rem">${f2}</td>
+              <td style="text-align:center;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.8rem">${f3}</td>`;
+    } else if(tablaView==='elim'){
+      cols = `<td style="text-align:center"><span class="r-pts">${e}</span></td>`;
+    } else {
+      cols = `<td style="text-align:center;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.85rem">${g}</td>
+              <td style="text-align:center;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.85rem">${e}</td>`;
+    }
+    const totPts = tablaView==='elim' ? e : tablaView==='grupos' ? g : tot;
     return `<tr>
       <td><span class="r-num">${i+1}</span></td>
       <td><div style="font-weight:600;color:var(--text)">${p.nombre}</div></td>
-      ${tdG}${tdE}
-      <td><span class="r-pts" style="font-size:1rem">${totPts}</span></td>
+      ${cols}
+      <td style="text-align:center"><span class="r-pts" style="font-size:1rem">${totPts}</span></td>
     </tr>`;
   }).join('');
 }
@@ -2305,7 +2345,7 @@ async function loadPred(force=false){
 function calcPremios(){
   const n = participants.filter(p=>p.activo==='ACTIVO').length;
   document.getElementById('p-num').textContent = n;
-  const bolsa = n * 112500;
+  const bolsa = n * 125000;
   document.getElementById('p-bolsa').textContent = '$'+bolsa.toLocaleString('es-CO');
 
   const fmt = v => '$'+Math.round(v).toLocaleString('es-CO');
@@ -2320,15 +2360,15 @@ function calcPremios(){
     <div class="card">
       <div class="card-title" style="color:var(--text);flex-direction:column;align-items:flex-start;gap:3px">
         <span>${icon} ${name}</span>
-        <span style="font-size:.72rem;color:var(--gold2);font-weight:600;letter-spacing:1px">${sub}</span>
+        <span style="font-size:.72rem;color:#6b7280;font-weight:600;letter-spacing:1px">${sub}</span>
       </div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;color:var(--text);font-weight:900;margin-bottom:12px">${fmt(total)}</div>
       ${showPodium ? [['🥇 1° lugar',0.50],['🥈 2° lugar',0.30],['🥉 3° lugar',0.20]].map(([l,pct])=>`
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border2);font-size:.85rem">
-          <span style="color:var(--gold2);font-weight:600">${l}</span>
+          <span style="color:#6b7280;font-weight:600">${l}</span>
           <span style="font-family:'DM Mono',monospace;color:var(--text);font-weight:700">${fmt(total*pct)}</span>
         </div>`).join('') :
-        `<div style="padding:5px 0;font-size:.85rem;color:var(--gold2);font-weight:600">Todo el premio es para el mejor de la fecha</div>`}
+        `<div style="padding:5px 0;font-size:.85rem;color:#6b7280;font-weight:600">Todo el premio es para el mejor de la fecha</div>`}
     </div>`;
 
   document.getElementById('prizes-grid').innerHTML = `
@@ -2350,8 +2390,8 @@ function calcPremios(){
     </div>
     <div class="card" style="margin-bottom:4px">
       <div style="font-size:.75rem;color:var(--text-mid);line-height:1.9">
-        <strong style="color:var(--text)">Distribución de fechas de grupos (3% c/u):</strong> El premio de cada fecha será para el participante con mayor puntaje en esa jornada; en caso de empate, se divide en partes iguales.<br>
-        <strong style="color:var(--text)">Clasificación grupos, eliminatoria y global (21% + 27% + 33%):</strong> 50% al 1°, 30% al 2°, 20% al 3°. En empate los premios del puesto se suman y dividen entre los empatados.<br>
+        <strong style="color:var(--text)">Distribución de fechas de grupos (3% c/u):</strong> El premio de cada fecha será para el participante con mayor puntaje en esa jornada; en caso de empate, se divide en partes iguales entre todos los que empaten.<br>
+        <strong style="color:var(--text)">Clasificación grupos, eliminatoria y global (21% + 27% + 33%):</strong> 50% al 1°, 30% al 2°, 20% al 3°. En caso de empate, los premios de los puestos empatados se sumarán y se dividirán en partes iguales entre los participantes empatados.<br>
         <strong style="color:var(--text)">Total distribuido:</strong> 3%×3 + 21% + 27% + 33% = <strong style="color:var(--gold)">90%</strong> de la bolsa. El 10% restante cubre gastos de organización.
       </div>
     </div>`;
