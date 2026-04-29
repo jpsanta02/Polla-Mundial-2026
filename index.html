@@ -1879,25 +1879,33 @@ async function submitForm(){
       const payload = JSON.stringify({action:'submit', data});
       const cbName = 'sbcb_' + Date.now();
       const script = document.createElement('script');
+      console.log('📤 Enviando a GAS:', nom, wa);
       const timer = setTimeout(() => {
         if(window[cbName]){ delete window[cbName]; script.remove(); }
+        console.error('⏱ TIMEOUT — GAS no respondió en 10s. Verifica el deploy.');
         reject(new Error('timeout'));
       }, 10000);
       window[cbName] = (res) => {
         clearTimeout(timer);
         delete window[cbName];
         script.remove();
+        console.log('📥 Respuesta GAS:', JSON.stringify(res));
         if(res && res.ok) resolve(res);
-        else reject(new Error('GAS error'));
+        else { console.error('❌ GAS error:', res); reject(new Error('GAS error')); }
       };
-      script.src = GS_URL + '?payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
-      script.crossOrigin = 'anonymous';
-      script.onerror = () => { clearTimeout(timer); delete window[cbName]; script.remove(); reject(new Error('network')); };
+      const sep = GS_URL.includes('?') ? '&' : '?';
+      script.src = GS_URL + sep + 'payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
+      console.log('🔗 URL:', script.src.substring(0, 100) + '...');
+      script.onerror = (err) => {
+        clearTimeout(timer); delete window[cbName]; script.remove();
+        console.error('🌐 Error de red al llamar GAS');
+        reject(new Error('network'));
+      };
       document.head.appendChild(script);
     });
     enviado = true;
   } catch(e){
-    console.log('submit error', e);
+    console.error('🔴 submit error:', e.message);
   }
 
   _isSubmitting = false;
@@ -2480,23 +2488,8 @@ async function savePts(i){
 
 // ═══════════════════════════════ JSONP FETCH (evita CORS) ═══════════════════════════════
 async function jsonpFetch(url) {
-  // Detect Safari/iOS — always use JSONP to avoid CORS issues
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
-                   /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-  if (!isSafari) {
-    // Try regular fetch first (Chrome, Firefox, etc.)
-    try {
-      const resp = await fetch(url, {method:'GET'});
-      if(resp.ok){
-        const text = await resp.text();
-        const clean = text.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, '');
-        return JSON.parse(clean);
-      }
-    } catch(e) { /* fall through to JSONP */ }
-  }
-
-  // JSONP — works everywhere including Safari iOS
+  // Siempre JSONP — Google Apps Script no permite CORS desde dominios externos
+  // (GitHub Pages, etc.). fetch() falla silenciosamente con opaque responses.
   return new Promise((resolve, reject) => {
     const cbName = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
     const script = document.createElement('script');
@@ -2505,12 +2498,21 @@ async function jsonpFetch(url) {
       script.remove();
       resolve(data);
     };
-    script.src = url + '&callback=' + cbName;
-    script.crossOrigin = 'anonymous';
-    script.onerror = () => { delete window[cbName]; script.remove(); reject(new Error('JSONP error')); };
+    // Agregar callback a la URL correctamente
+    const sep = url.includes('?') ? '&' : '?';
+    script.src = url + sep + 'callback=' + cbName;
+    script.onerror = () => {
+      delete window[cbName];
+      script.remove();
+      reject(new Error('JSONP network error'));
+    };
     document.head.appendChild(script);
     setTimeout(() => {
-      if(window[cbName]){ delete window[cbName]; script.remove(); reject(new Error('timeout')); }
+      if(window[cbName]){
+        delete window[cbName];
+        script.remove();
+        reject(new Error('JSONP timeout'));
+      }
     }, 10000);
   });
 }
