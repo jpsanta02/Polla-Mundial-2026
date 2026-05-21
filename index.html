@@ -2228,8 +2228,24 @@ function renderPredGrupos(active){
       const qs = p.data?.questions || {};
       const extras = [['Más goles anotados',qs.golesFavor],['Menos goles en contra',qs.menosGolesContra],['Más goles en contra',qs.golesContra],['Peor equipo',qs.peorEquipo||qs.tarjetas],['Equipo goleador',qs.goleador]].filter(([,v])=>v);
       const extrasHTML = extras.length ? `<div class="pred-extras">${extras.map(([l,v])=>`<div class="pred-extra-row"><span class="pe-label">${l}</span><span class="pe-val">${v}</span></div>`).join('')}</div>` : '';
+
+      // Posiciones de grupo
+      const positions = p.data?.positions || {};
+      const posHTML = Object.entries(GROUPS).map(([g, teams]) => {
+        const pos = positions[g] || [];
+        if(!pos.length || pos.every(x=>!x)) return '';
+        return `<div style="margin-bottom:6px">
+          <div style="font-size:.68rem;font-weight:800;letter-spacing:1.5px;color:var(--text-mid);text-transform:uppercase;margin-bottom:2px">Grupo ${g}</div>
+          ${pos.map((eq,i)=>`<div style="display:flex;gap:6px;align-items:center;font-size:.78rem;padding:1px 0;">
+            <span style="font-family:'DM Mono',monospace;color:var(--text-dim);min-width:14px">${i+1}°</span>
+            <span>${eq ? (flagImg(eq)+' '+eq) : '<span style="color:var(--text-dim)">—</span>'}</span>
+          </div>`).join('')}
+        </div>`;
+      }).filter(Boolean).join('');
+      const posicionesSection = posHTML ? `<div class="pred-group-label">🏆 Posiciones de grupo</div><div style="padding:4px 0 6px">${posHTML}</div>` : '';
+
       const previewHTML = daySections[0] || '<div style="color:var(--text-dim);font-size:.8rem;padding:4px 0">Sin predicciones</div>';
-      const restHTML = daySections.slice(1).join('') + extrasHTML;
+      const restHTML = daySections.slice(1).join('') + posicionesSection + extrasHTML;
       const divClass = p.division==='A' ? 'div-a' : p.division==='B' ? 'div-b' : 'div-none';
       return `<div class="pred-card">
         <div class="pred-card-hdr ${divClass}">
