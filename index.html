@@ -2260,6 +2260,13 @@ function renderPredGrupos(active){
         </div>
       </div>`;
     }).join('') + '</div>';
+  // Event delegation for PDF buttons
+  document.getElementById('pred-content').addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-pdf]');
+    if (!btn) return;
+    e.stopPropagation();
+    descargarPDF(parseInt(btn.getAttribute('data-pdf')));
+  });
 }
 
 function renderPredLlave(active){
