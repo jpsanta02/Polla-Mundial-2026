@@ -369,7 +369,6 @@ input[type=number]{-moz-appearance:textfield;}
 }
 
 </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -2664,153 +2663,187 @@ function initCountdown(){
 
 // ── Descargar PDF de predicciones de un participante ──
 function descargarPDF(pi) {
-  if (typeof window.jspdf === 'undefined') {
-    alert('Cargando librería PDF, intenta en unos segundos...');
-    return;
-  }
-  const { jsPDF } = window.jspdf;
   const active = participants.filter(p => p.id !== '__config__' && p.activo === 'SI');
   const p = active[pi];
   if (!p) return;
 
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W = 210, margin = 14;
-  let y = 0;
+  // Cargar jsPDF dinámicamente si no está disponible
+  function generarPDF() {
+    if (typeof window.jspdf === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = () => generarPDF();
+      s.onerror = () => usarPrintFallback(p);
+      document.head.appendChild(s);
+      return;
+    }
 
-  // ── Header ──
-  doc.setFillColor(26, 26, 46);
-  doc.rect(0, 0, W, 28, 'F');
-  doc.setTextColor(240, 180, 41);
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.text('⚽ Polla Mundial 2026', margin, 12);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(255,255,255);
-  doc.text('Predicciones de: ' + p.nombre, margin, 20);
-  doc.text('WhatsApp: ' + (p.whatsapp||'—'), margin, 26);
-  y = 36;
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const W = 210, margin = 14;
+      let y = 0;
 
+      doc.setFillColor(26, 26, 46);
+      doc.rect(0, 0, W, 28, 'F');
+      doc.setTextColor(240, 180, 41);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Polla Mundial 2026', margin, 12);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(255,255,255);
+      doc.text('Predicciones de: ' + p.nombre, margin, 20);
+      doc.text('WhatsApp: ' + (p.whatsapp||'-'), margin, 26);
+      y = 36;
+
+      const scores = p.data?.scores || {};
+      const positions = p.data?.positions || {};
+      const questions = p.data?.questions || {};
+
+      const checkNewPage = (needed) => {
+        if (y + (needed||10) > 280) { doc.addPage(); y = 14; }
+      };
+
+      // Marcadores
+      doc.setFontSize(12); doc.setFont('helvetica','bold');
+      doc.setTextColor(26,26,46);
+      doc.text('Marcadores Fase de Grupos', margin, y); y += 7;
+
+      Object.entries(GROUPS).forEach(([g, teams]) => {
+        const partidos = GM[g] || [];
+        const grpScores = scores[g] || [];
+        checkNewPage(8 + partidos.length * 6);
+        doc.setFillColor(240,180,41);
+        doc.rect(margin, y, 182, 5.5, 'F');
+        doc.setFontSize(8); doc.setFont('helvetica','bold');
+        doc.setTextColor(26,26,46);
+        doc.text('Grupo ' + g, margin+2, y+4);
+        y += 7;
+        partidos.forEach((pair, mi) => {
+          const m = grpScores[mi];
+          const local = teams[pair[0]];
+          const visit = teams[pair[1]];
+          const score = (m && m.t1!=='' && m.t2!=='') ? m.t1+'-'+m.t2 : '--';
+          const j = mi<2?'J1':mi<4?'J2':'J3';
+          checkNewPage(6);
+          doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+          doc.setTextColor(60,60,60);
+          doc.text(j, margin+2, y);
+          doc.text(local, margin+10, y);
+          doc.setFont('helvetica','bold');
+          doc.text(score, margin+80, y, {align:'center'});
+          doc.setFont('helvetica','normal');
+          doc.text(visit, margin+90, y);
+          y += 5.2;
+        });
+        y += 2;
+      });
+
+      // Posiciones
+      checkNewPage(15);
+      doc.setFontSize(12); doc.setFont('helvetica','bold');
+      doc.setTextColor(26,26,46);
+      doc.text('Posiciones de Grupos', margin, y); y += 7;
+      Object.entries(positions).forEach(([g, pos]) => {
+        if (!pos||!pos.some(x=>x)) return;
+        checkNewPage(6);
+        doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+        doc.setTextColor(60,60,60);
+        doc.text('Grp '+g+':', margin+2, y);
+        doc.setFont('helvetica','normal');
+        doc.text(pos.map((eq,i)=>(i+1)+'. '+(eq||'-')).join('  '), margin+16, y);
+        y += 5.2;
+      });
+
+      // Preguntas
+      checkNewPage(20); y += 3;
+      doc.setFontSize(12); doc.setFont('helvetica','bold');
+      doc.setTextColor(26,26,46);
+      doc.text('Preguntas Adicionales', margin, y); y += 7;
+      [['Mas goles anotados',questions.golesFavor],
+       ['Menos goles en contra',questions.menosGolesContra],
+       ['Mas goles en contra',questions.golesContra],
+       ['Peor equipo',questions.peorEquipo],
+       ['Equipo del goleador',questions.goleador]
+      ].forEach(([l,v]) => {
+        checkNewPage(6);
+        doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+        doc.setTextColor(60,60,60);
+        doc.text(l+':', margin+2, y);
+        doc.setFont('helvetica','normal');
+        doc.text(v||'-', margin+55, y);
+        y += 5.2;
+      });
+
+      // Footer
+      const pages = doc.getNumberOfPages();
+      for (let i=1;i<=pages;i++) {
+        doc.setPage(i);
+        doc.setFontSize(7); doc.setTextColor(150,150,150);
+        doc.text('Polla Mundial 2026 - '+p.nombre+' - Pag '+i+'/'+pages, W/2, 292, {align:'center'});
+      }
+
+      doc.save('polla-'+p.nombre.replace(/\s+/g,'-').toLowerCase()+'.pdf');
+
+    } catch(err) {
+      console.error('PDF error:', err);
+      usarPrintFallback(p);
+    }
+  }
+
+  generarPDF();
+}
+
+function usarPrintFallback(p) {
+  // Fallback: abrir ventana de impresión con las predicciones
   const scores = p.data?.scores || {};
   const positions = p.data?.positions || {};
   const questions = p.data?.questions || {};
 
-  const NUEVO = {
-    A:[[0,1],[2,3],[0,2],[3,1],[0,3],[1,2]],
-    B:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    C:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    D:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    E:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    F:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    G:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    H:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    I:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    J:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    K:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    L:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]]
-  };
-
-  const checkNewPage = (needed=10) => {
-    if (y + needed > 280) { doc.addPage(); y = 14; }
-  };
-
-  // ── Marcadores por grupo ──
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(26, 26, 46);
-  doc.text('Marcadores Fase de Grupos', margin, y); y += 7;
+  let html = `<html><head><title>Polla - ${p.nombre}</title>
+  <style>body{font-family:Arial,sans-serif;padding:20px;font-size:12px}
+  h1{background:#1a1a2e;color:#F0B429;padding:10px;margin:0 0 10px}
+  h2{color:#1a1a2e;border-bottom:2px solid #F0B429;margin-top:16px}
+  table{width:100%;border-collapse:collapse;margin-bottom:8px}
+  td{padding:3px 6px;border-bottom:1px solid #eee}
+  .grp{font-weight:bold;background:#f5f5f5}
+  @media print{button{display:none}}</style></head><body>
+  <h1>Polla Mundial 2026</h1>
+  <p><strong>Participante:</strong> ${p.nombre} | <strong>WhatsApp:</strong> ${p.whatsapp||'-'}</p>
+  <h2>Marcadores</h2><table>`;
 
   Object.entries(GROUPS).forEach(([g, teams]) => {
-    checkNewPage(8 + 6*6);
-    // Group label
-    doc.setFillColor(240, 180, 41);
-    doc.roundedRect(margin, y, 182, 6, 1, 1, 'F');
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(26, 26, 46);
-    doc.text('Grupo ' + g, margin + 2, y + 4);
-    y += 8;
-
-    const grpScores = scores[g] || [];
-    const partidos = NUEVO[g] || [];
-    partidos.forEach((pair, mi) => {
-      const m = grpScores[mi];
-      const local = teams[pair[0]];
-      const visit = teams[pair[1]];
-      const score = (m && m.t1 !== '' && m.t2 !== '') ? m.t1 + ' - ' + m.t2 : '— - —';
-      checkNewPage(6);
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(50, 50, 50);
-      const jornada = mi < 2 ? 'J1' : mi < 4 ? 'J2' : 'J3';
-      doc.text(jornada, margin + 2, y);
-      doc.text(local, margin + 12, y);
-      doc.setFont('helvetica', 'bold');
-      doc.text(score, margin + 80, y, { align: 'center' });
-      doc.setFont('helvetica', 'normal');
-      doc.text(visit, margin + 110, y);
-      y += 5.5;
+    html += `<tr><td colspan="3" class="grp">Grupo ${g}</td></tr>`;
+    (GM[g]||[]).forEach((pair, mi) => {
+      const m = (scores[g]||[])[mi];
+      const score = (m&&m.t1!==''&&m.t2!=='') ? m.t1+' - '+m.t2 : '-- - --';
+      html += `<tr><td>${teams[pair[0]]}</td><td style="text-align:center;font-weight:bold">${score}</td><td>${teams[pair[1]]}</td></tr>`;
     });
-    y += 2;
   });
 
-  // ── Posiciones de grupos ──
-  checkNewPage(15);
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(26, 26, 46);
-  doc.text('Posiciones de Grupos', margin, y); y += 7;
-
+  html += `</table><h2>Posiciones</h2><table>`;
   Object.entries(positions).forEach(([g, pos]) => {
-    if (!pos || !pos.some(x => x)) return;
-    checkNewPage(7);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(50,50,50);
-    doc.text('Grupo ' + g + ':', margin + 2, y);
-    doc.setFont('helvetica', 'normal');
-    const posText = pos.map((eq, i) => (i+1) + '° ' + (eq||'—')).join('  ·  ');
-    doc.text(posText, margin + 18, y);
-    y += 5.5;
+    if (!pos||!pos.some(x=>x)) return;
+    html += `<tr><td><strong>Grupo ${g}:</strong></td><td>${pos.map((e,i)=>(i+1)+'° '+e).join(' · ')}</td></tr>`;
   });
 
-  // ── Preguntas adicionales ──
-  checkNewPage(20);
-  y += 3;
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(26, 26, 46);
-  doc.text('Preguntas Adicionales', margin, y); y += 7;
+  html += `</table><h2>Preguntas Adicionales</h2><table>
+  <tr><td>Más goles anotados</td><td>${questions.golesFavor||'-'}</td></tr>
+  <tr><td>Menos goles en contra</td><td>${questions.menosGolesContra||'-'}</td></tr>
+  <tr><td>Más goles en contra</td><td>${questions.golesContra||'-'}</td></tr>
+  <tr><td>Peor equipo</td><td>${questions.peorEquipo||'-'}</td></tr>
+  <tr><td>Equipo del goleador</td><td>${questions.goleador||'-'}</td></tr>
+  </table>
+  <br><button onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+  </body></html>`;
 
-  const pregLabels = [
-    ['Más goles anotados', questions.golesFavor],
-    ['Menos goles en contra', questions.menosGolesContra],
-    ['Más goles en contra', questions.golesContra],
-    ['Peor equipo', questions.peorEquipo],
-    ['Equipo del goleador', questions.goleador],
-  ];
-  pregLabels.forEach(([label, val]) => {
-    checkNewPage(6);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(50,50,50);
-    doc.text(label + ':', margin + 2, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(val || '—', margin + 60, y);
-    y += 5.5;
-  });
-
-  // ── Footer ──
-  const pageCount = doc.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(7);
-    doc.setTextColor(150,150,150);
-    doc.text('Polla Mundial 2026 — ' + p.nombre + ' — Página ' + i + ' de ' + pageCount, W/2, 292, {align:'center'});
-  }
-
-  doc.save('polla-' + p.nombre.replace(/\s+/g,'-').toLowerCase() + '.pdf');
+  const w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
 }
+
+
 
 document.addEventListener('DOMContentLoaded',()=>{
   initCountdown();
