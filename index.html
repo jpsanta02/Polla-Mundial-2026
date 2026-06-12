@@ -2251,7 +2251,7 @@ function renderPredGrupos(active){
         <div class="pred-card-hdr ${divClass}">
           <div class="pred-card-name">${p.nombre}</div>
           ${cfg.divisiones_visibles && p.division?`<span class="tag ${p.division==='A'?'tag-gold':'tag-blue'}" style="font-size:.65rem">Div ${p.division}</span>`:''}
-          <button data-pdfidx="${pi}" style="margin-left:auto;padding:4px 10px;border:1.5px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text-mid);font-size:.72rem;cursor:pointer" title="Descargar PDF">📄 PDF</button>
+          <button onclick="event.stopPropagation();descargarPDF(${pi})" style="margin-left:auto;padding:4px 10px;border:1.5px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text-mid);font-size:.72rem;cursor:pointer;display:flex;align-items:center;gap:4px" title="Descargar PDF">📄 PDF</button>
         </div>
         <div class="pred-card-body">
           ${previewHTML}
@@ -2260,13 +2260,6 @@ function renderPredGrupos(active){
         </div>
       </div>`;
     }).join('') + '</div>';
-  // Event delegation for PDF buttons
-  document.getElementById('pred-content').addEventListener('click', function(e) {
-    const btn = e.target.closest('[data-pdfidx]');
-    if (!btn) return;
-    e.stopPropagation();
-    descargarPDF(parseInt(btn.getAttribute('data-pdfidx')));
-  });
 }
 
 function renderPredLlave(active){
