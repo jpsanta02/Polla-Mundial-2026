@@ -369,7 +369,6 @@ input[type=number]{-moz-appearance:textfield;}
 }
 
 </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -2664,151 +2663,102 @@ function initCountdown(){
 
 // ── Descargar PDF de predicciones de un participante ──
 function descargarPDF(id) {
-  if (typeof window.jspdf === 'undefined') {
-    alert('Cargando librería PDF, intenta en unos segundos...');
-    return;
-  }
-  const { jsPDF } = window.jspdf;
   const p = participants.find(x => String(x.id) === String(id) && x.activo === 'ACTIVO');
   if (!p) { alert('No se encontró el participante.'); return; }
 
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W = 210, margin = 14;
-  let y = 0;
-
-  // ── Header ──
-  doc.setFillColor(26, 26, 46);
-  doc.rect(0, 0, W, 28, 'F');
-  doc.setTextColor(240, 180, 41);
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.text('⚽ Polla Mundial 2026', margin, 12);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(255,255,255);
-  doc.text('Predicciones de: ' + p.nombre, margin, 20);
-  doc.text('WhatsApp: ' + (p.whatsapp||'—'), margin, 26);
-  y = 36;
-
-  const scores = p.data?.scores || {};
+  const scores    = p.data?.scores    || {};
   const positions = p.data?.positions || {};
   const questions = p.data?.questions || {};
 
-  const NUEVO = {
-    A:[[0,1],[2,3],[0,2],[3,1],[0,3],[1,2]],
-    B:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    C:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    D:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    E:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    F:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    G:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    H:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    I:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    J:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    K:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]],
-    L:[[0,1],[2,3],[0,2],[3,1],[0,3],[2,1]]
-  };
-
-  const checkNewPage = (needed=10) => {
-    if (y + needed > 280) { doc.addPage(); y = 14; }
-  };
-
-  // ── Marcadores por grupo ──
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(26, 26, 46);
-  doc.text('Marcadores Fase de Grupos', margin, y); y += 7;
-
+  let marcadoresHTML = '';
   Object.entries(GROUPS).forEach(([g, teams]) => {
-    checkNewPage(8 + 6*6);
-    // Group label
-    doc.setFillColor(240, 180, 41);
-    doc.roundedRect(margin, y, 182, 6, 1, 1, 'F');
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(26, 26, 46);
-    doc.text('Grupo ' + g, margin + 2, y + 4);
-    y += 8;
-
+    const partidos  = GM[g] || [];
     const grpScores = scores[g] || [];
-    const partidos = NUEVO[g] || [];
+    marcadoresHTML += `<div class="grp-block">
+      <div class="grp-label">Grupo ${g}</div>`;
     partidos.forEach((pair, mi) => {
-      const m = grpScores[mi];
-      const local = teams[pair[0]];
-      const visit = teams[pair[1]];
-      const score = (m && m.t1 !== '' && m.t2 !== '') ? m.t1 + ' - ' + m.t2 : '— - —';
-      checkNewPage(6);
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(50, 50, 50);
-      const jornada = mi < 2 ? 'J1' : mi < 4 ? 'J2' : 'J3';
-      doc.text(jornada, margin + 2, y);
-      doc.text(local, margin + 12, y);
-      doc.setFont('helvetica', 'bold');
-      doc.text(score, margin + 80, y, { align: 'center' });
-      doc.setFont('helvetica', 'normal');
-      doc.text(visit, margin + 110, y);
-      y += 5.5;
+      const m     = grpScores[mi];
+      const score = (m && m.t1 !== '' && m.t2 !== '') ? m.t1 + ' - ' + m.t2 : '? - ?';
+      const j     = mi < 2 ? 'J1' : mi < 4 ? 'J2' : 'J3';
+      marcadoresHTML += `<div class="match-row">
+        <span class="jornada">${j}</span>
+        <span class="team">${teams[pair[0]]}</span>
+        <span class="score">${score}</span>
+        <span class="team right">${teams[pair[1]]}</span>
+      </div>`;
     });
-    y += 2;
+    marcadoresHTML += '</div>';
   });
 
-  // ── Posiciones de grupos ──
-  checkNewPage(15);
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(26, 26, 46);
-  doc.text('Posiciones de Grupos', margin, y); y += 7;
-
+  let posHTML = '';
   Object.entries(positions).forEach(([g, pos]) => {
     if (!pos || !pos.some(x => x)) return;
-    checkNewPage(7);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(50,50,50);
-    doc.text('Grupo ' + g + ':', margin + 2, y);
-    doc.setFont('helvetica', 'normal');
-    const posText = pos.map((eq, i) => (i+1) + '° ' + (eq||'—')).join('  ·  ');
-    doc.text(posText, margin + 18, y);
-    y += 5.5;
+    posHTML += `<div class="pos-row">
+      <span class="pos-grp">Grupo ${g}:</span>
+      <span>${pos.map((e,i) => (i+1)+'° '+e).join(' · ')}</span>
+    </div>`;
   });
 
-  // ── Preguntas adicionales ──
-  checkNewPage(20);
-  y += 3;
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(26, 26, 46);
-  doc.text('Preguntas Adicionales', margin, y); y += 7;
-
-  const pregLabels = [
-    ['Más goles anotados', questions.golesFavor],
-    ['Menos goles en contra', questions.menosGolesContra],
-    ['Más goles en contra', questions.golesContra],
+  const preguntasHTML = [
+    ['Equipo con más goles anotados', questions.golesFavor],
+    ['Equipo con menos goles en contra', questions.menosGolesContra],
+    ['Equipo con más goles en contra', questions.golesContra],
     ['Peor equipo', questions.peorEquipo],
     ['Equipo del goleador', questions.goleador],
-  ];
-  pregLabels.forEach(([label, val]) => {
-    checkNewPage(6);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(50,50,50);
-    doc.text(label + ':', margin + 2, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(val || '—', margin + 60, y);
-    y += 5.5;
-  });
+  ].map(([l,v]) => `<div class="preg-row"><span class="preg-label">${l}:</span><span class="preg-val">${v||'—'}</span></div>`).join('');
 
-  // ── Footer ──
-  const pageCount = doc.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(7);
-    doc.setTextColor(150,150,150);
-    doc.text('Polla Mundial 2026 — ' + p.nombre + ' — Página ' + i + ' de ' + pageCount, W/2, 292, {align:'center'});
+  const ventana = window.open('', '_blank', 'width=820,height=950,scrollbars=yes');
+  if (!ventana) {
+    alert('El navegador bloqueó la ventana emergente. Por favor permite las ventanas emergentes para este sitio e intenta de nuevo.');
+    return;
   }
 
-  doc.save('polla-' + p.nombre.replace(/\s+/g,'-').toLowerCase() + '.pdf');
+  ventana.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Polla 2026 — ${p.nombre}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;color:#222}
+  .header{background:#1a1a2e;color:#F0B429;padding:20px 24px}
+  .header h1{font-size:20px;margin-bottom:6px}
+  .header p{color:#ccc;font-size:13px}
+  .content{padding:20px 24px;max-width:760px;margin:0 auto}
+  h2{font-size:14px;color:#1a1a2e;border-bottom:2px solid #F0B429;padding-bottom:4px;margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px}
+  .grp-block{margin-bottom:14px}
+  .grp-label{background:#F0B429;color:#1a1a2e;font-weight:bold;font-size:11px;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:5px}
+  .match-row{display:flex;align-items:center;padding:4px 6px;border-bottom:1px solid #eee;font-size:12px}
+  .jornada{width:28px;color:#999;font-size:10px;flex-shrink:0}
+  .team{flex:1}
+  .team.right{text-align:right}
+  .score{width:64px;text-align:center;font-weight:bold;color:#1a1a2e;background:#efefef;border-radius:4px;padding:2px 6px;font-size:13px;flex-shrink:0}
+  .pos-row{display:flex;padding:5px 6px;border-bottom:1px solid #eee;font-size:12px;align-items:baseline}
+  .pos-grp{font-weight:bold;width:70px;color:#1a1a2e;flex-shrink:0}
+  .preg-row{display:flex;padding:6px 6px;border-bottom:1px solid #eee;font-size:12px}
+  .preg-label{width:240px;color:#666;flex-shrink:0}
+  .preg-val{font-weight:bold;color:#1a1a2e}
+  .print-btn{position:fixed;bottom:24px;right:24px;background:#1a1a2e;color:#F0B429;border:none;padding:13px 26px;font-size:14px;font-weight:bold;border-radius:8px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+  .print-btn:hover{background:#2d2d5e}
+  @media print{.print-btn{display:none}body{background:#fff}.content{padding:10px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>⚽ Polla Mundial 2026</h1>
+  <p>Predicciones de: <strong style="color:#fff">${p.nombre}</strong>&nbsp;&nbsp;|&nbsp;&nbsp;WhatsApp: ${p.whatsapp||'—'}</p>
+</div>
+<div class="content">
+  <h2>Marcadores — Fase de Grupos</h2>
+  ${marcadoresHTML}
+  <h2>Posiciones de Grupos</h2>
+  ${posHTML||'<p style="color:#999;font-size:12px;padding:8px 0">Sin predicciones de posiciones</p>'}
+  <h2>Preguntas Adicionales</h2>
+  ${preguntasHTML}
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ Guardar / Imprimir PDF</button>
+</body></html>`);
+  ventana.document.close();
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
