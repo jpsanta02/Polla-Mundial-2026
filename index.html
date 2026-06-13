@@ -2669,8 +2669,8 @@ function descargarPDF(id) {
     return;
   }
   const { jsPDF } = window.jspdf;
-  const p = participants.find(x => x.id === id && x.activo === 'ACTIVO');
-  if (!p) return;
+  const p = participants.find(x => String(x.id) === String(id) && x.activo === 'ACTIVO');
+  if (!p) { alert('No se encontró el participante.'); return; }
 
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = 210, margin = 14;
