@@ -1625,14 +1625,29 @@ function switchBracketTab(key, btn){
 function onLlaveInput(rnd, idx){
   const g1k = `bk_${rnd}_${idx}_g1`, g2k = `bk_${rnd}_${idx}_g2`;
   const g1m = `bm_${rnd}_${idx}_g1`, g2m = `bm_${rnd}_${idx}_g2`;
-  const g1 = parseInt(document.getElementById(g1k)?.value ?? document.getElementById(g1m)?.value ?? '');
-  const g2 = parseInt(document.getElementById(g2k)?.value ?? document.getElementById(g2m)?.value ?? '');
 
-  // Sync desktop ↔ mobile values
-  if(document.getElementById(g1k)) document.getElementById(g1k).value = document.getElementById(g1k).value;
-  if(document.getElementById(g1m)) document.getElementById(g1m).value = document.getElementById(g1k)?.value || document.getElementById(g1m)?.value || '';
+  // Leer de cualquier input que tenga valor — desktop o móvil
+  const elG1k = document.getElementById(g1k);
+  const elG2k = document.getElementById(g2k);
+  const elG1m = document.getElementById(g1m);
+  const elG2m = document.getElementById(g2m);
 
-  // Save team names too
+  // Tomar el valor del que tenga contenido (móvil o desktop)
+  const rawG1 = (elG1k?.value !== '' && elG1k?.value !== undefined ? elG1k?.value : null)
+             ?? elG1m?.value ?? '';
+  const rawG2 = (elG2k?.value !== '' && elG2k?.value !== undefined ? elG2k?.value : null)
+             ?? elG2m?.value ?? '';
+
+  const g1 = parseInt(rawG1);
+  const g2 = parseInt(rawG2);
+
+  // Sync desktop ↔ mobile: ambos quedan con el mismo valor
+  if(elG1k) elG1k.value = rawG1;
+  if(elG1m) elG1m.value = rawG1;
+  if(elG2k) elG2k.value = rawG2;
+  if(elG2m) elG2m.value = rawG2;
+
+  // Guardar nombres de equipos
   const {t1, t2} = getLlaveTeams(rnd, idx);
   llavePred[rnd][idx].t1 = t1;
   llavePred[rnd][idx].t2 = t2;
@@ -1640,7 +1655,7 @@ function onLlaveInput(rnd, idx){
   if(!isNaN(g1) && !isNaN(g2)){
     llavePred[rnd][idx].g1 = g1;
     llavePred[rnd][idx].g2 = g2;
-    // Auto-select winner if scores differ
+    // Auto-seleccionar ganador si los goles difieren
     if(g1 !== g2){
       const win = g1 > g2 ? t1 : t2;
       llavePred[rnd][idx].win = win;
