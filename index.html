@@ -1351,6 +1351,23 @@ async function submitElim(){
     return;
   }
 
+  // Barrer TODOS los inputs del DOM antes de enviar — captura valores que oninput no detectó (iOS)
+  ['r16','r8','r4','r2','final','third'].forEach(rnd => {
+    const n = {r16:16,r8:8,r4:4,r2:2,final:1,third:1}[rnd];
+    for(let i=0; i<n; i++){
+      const {t1,t2} = getLlaveTeams(rnd,i);
+      // Leer de móvil (bm_) o desktop (bk_), lo que tenga valor
+      const g1El = document.getElementById(`bm_${rnd}_${i}_g1`) || document.getElementById(`bk_${rnd}_${i}_g1`);
+      const g2El = document.getElementById(`bm_${rnd}_${i}_g2`) || document.getElementById(`bk_${rnd}_${i}_g2`);
+      const winEl = document.getElementById(`bm_${rnd}_${i}_win`) || document.getElementById(`bk_${rnd}_${i}_win`);
+      if(g1El && g1El.value !== '') llavePred[rnd][i].g1 = parseInt(g1El.value)||0;
+      if(g2El && g2El.value !== '') llavePred[rnd][i].g2 = parseInt(g2El.value)||0;
+      if(winEl && winEl.value) llavePred[rnd][i].win = winEl.value;
+      if(t1 && t1!=='?') llavePred[rnd][i].t1 = t1;
+      if(t2 && t2!=='?') llavePred[rnd][i].t2 = t2;
+    }
+  });
+
   const btn = document.getElementById('elim-submit-btn');
   const msg = document.getElementById('elim-submit-msg');
 
@@ -1360,37 +1377,40 @@ async function submitElim(){
   btn.textContent = 'Enviando...';
 
   let enviado = false;
-  try {
-    await new Promise((resolve, reject) => {
-      const payload = JSON.stringify({
-        action: 'submitElim',
-        data: {
-          whatsapp: elimParticipante.whatsapp,
-          email: elimParticipante.email,
-          elim: llavePred
-        }
-      });
-      const cbName = 'elcb_' + Date.now();
-      const script = document.createElement('script');
-      const timer = setTimeout(() => {
-        if(window[cbName]){ delete window[cbName]; script.remove(); }
-        reject(new Error('timeout'));
-      }, 10000);
-      window[cbName] = (res) => {
-        clearTimeout(timer);
-        delete window[cbName];
-        script.remove();
-        if(res && res.ok) resolve(res);
-        else reject(new Error('GAS error'));
-      };
-      script.src = GS_URL + '?payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
-      script.crossOrigin = 'anonymous';
-      script.onerror = () => { clearTimeout(timer); delete window[cbName]; script.remove(); reject(new Error('network')); };
-      document.head.appendChild(script);
+  const intentarElim = () => new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      action: 'submitElim',
+      data: { whatsapp: elimParticipante.whatsapp, email: elimParticipante.email, elim: llavePred }
     });
-    enviado = true;
-  } catch(e) {
-    console.log('submitElim error', e);
+    const cbName = 'elcb_' + Date.now();
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      if(window[cbName]){ delete window[cbName]; script.remove(); }
+      reject(new Error('timeout'));
+    }, 30000);
+    window[cbName] = (res) => {
+      clearTimeout(timer); delete window[cbName]; script.remove();
+      if(res && res.ok) resolve(res);
+      else reject(new Error('gas:' + (res?.error||'?')));
+    };
+    const sep = GS_URL.includes('?') ? '&' : '?';
+    script.src = GS_URL + sep + 'payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
+    script.onerror = () => { clearTimeout(timer); delete window[cbName]; script.remove(); reject(new Error('network')); };
+    document.head.appendChild(script);
+  });
+
+  for(let i = 1; i <= 3 && !enviado; i++){
+    if(i > 1){
+      btn.textContent = `Reintentando (${i}/3)...`;
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    try {
+      await intentarElim();
+      enviado = true;
+    } catch(e){
+      console.log('submitElim intento', i, 'falló:', e.message);
+      if(e.message.startsWith('gas:')) break;
+    }
   }
 
   if(!enviado){
@@ -1513,17 +1533,17 @@ function renderLlaveMatch(rnd, idx, mobile=false){
       </div>
       <div class="bmm-row">
         <span class="bmm-team${!t1||t1==='?'?' tbd':''}" id="bmt1_${rnd}_${idx}">${t1&&t1!=='?'?flagImg(t1):''} ${t1||'Por definir'}</span>
-        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g1" placeholder="-" value="${p.g1||''}"
+        <input type="number" min="0" max="20" inputmode="numeric" id="bm_${rnd}_${idx}_g1" placeholder="-" value="${p.g1||''}"
           ${tbd?'disabled':''}
-          style="width:44px;height:40px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:1rem;"
-          oninput="onLlaveInput('${rnd}',${idx})" onwheel="this.blur()">
+          style="width:44px;height:40px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:1rem;-webkit-appearance:none;-moz-appearance:textfield;"
+          oninput="onLlaveInputMobile('${rnd}',${idx},'g1')" onchange="onLlaveInputMobile('${rnd}',${idx},'g1')" onwheel="this.blur()">
       </div>
       <div class="bmm-row">
         <span class="bmm-team${!t2||t2==='?'?' tbd':''}" id="bmt2_${rnd}_${idx}">${t2&&t2!=='?'?flagImg(t2):''} ${t2||'Por definir'}</span>
-        <input type="number" min="0" max="20" id="bm_${rnd}_${idx}_g2" placeholder="-" value="${p.g2||''}"
+        <input type="number" min="0" max="20" inputmode="numeric" id="bm_${rnd}_${idx}_g2" placeholder="-" value="${p.g2||''}"
           ${tbd?'disabled':''}
-          style="width:44px;height:40px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:1rem;"
-          oninput="onLlaveInput('${rnd}',${idx})" onwheel="this.blur()">
+          style="width:44px;height:40px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:6px;outline:none;text-align:center;color:var(--gold);font-family:'DM Mono',monospace;font-size:1rem;-webkit-appearance:none;-moz-appearance:textfield;"
+          oninput="onLlaveInputMobile('${rnd}',${idx},'g2')" onchange="onLlaveInputMobile('${rnd}',${idx},'g2')" onwheel="this.blur()">
       </div>
       ${!tbd?`<div style="margin-top:8px;font-size:.72rem;color:var(--text-dim)">Ganador / clasifica:</div>
       <select id="bm_${rnd}_${idx}_win" style="width:100%;margin-top:4px;background:var(--dark4);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--text);font-size:.8rem;outline:none;" onchange="onLlaveWin('${rnd}',${idx})">
@@ -1620,6 +1640,28 @@ function switchBracketTab(key, btn){
   document.querySelectorAll('.bracket-mobile-col').forEach(c=>c.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('bmc_'+key)?.classList.add('on');
+}
+
+// Versión móvil — lee directo del input que disparó el evento (sin buscar desktop)
+function onLlaveInputMobile(rnd, idx, field){
+  const elG1m = document.getElementById(`bm_${rnd}_${idx}_g1`);
+  const elG2m = document.getElementById(`bm_${rnd}_${idx}_g2`);
+  const rawG1 = elG1m?.value ?? '';
+  const rawG2 = elG2m?.value ?? '';
+  const g1 = parseInt(rawG1);
+  const g2 = parseInt(rawG2);
+  const {t1, t2} = getLlaveTeams(rnd, idx);
+  llavePred[rnd][idx].t1 = t1;
+  llavePred[rnd][idx].t2 = t2;
+  if(rawG1 !== '') llavePred[rnd][idx].g1 = isNaN(g1) ? '' : g1;
+  if(rawG2 !== '') llavePred[rnd][idx].g2 = isNaN(g2) ? '' : g2;
+  if(!isNaN(g1) && !isNaN(g2) && g1 !== g2){
+    const win = g1 > g2 ? t1 : t2;
+    llavePred[rnd][idx].win = win;
+    const sel = document.getElementById(`bm_${rnd}_${idx}_win`);
+    if(sel) sel.value = win;
+    propagateLlave(rnd, idx);
+  }
 }
 
 function onLlaveInput(rnd, idx){
@@ -1917,40 +1959,42 @@ async function submitForm(){
 
   const data = collectData();
 
-  // Enviar a Google Sheets vía JSONP y esperar confirmación real
+  // Enviar a Google Sheets vía JSONP — timeout 30s, hasta 3 intentos automáticos
+  const intentar = () => new Promise((resolve, reject) => {
+    const payload = JSON.stringify({action:'submit', data});
+    const cbName  = 'sbcb_' + Date.now();
+    const script  = document.createElement('script');
+    console.log('📤 Enviando a GAS:', nom, wa);
+    const timer = setTimeout(() => {
+      if(window[cbName]){ delete window[cbName]; script.remove(); }
+      console.error('⏱ TIMEOUT 30s');
+      reject(new Error('timeout'));
+    }, 30000);
+    window[cbName] = (res) => {
+      clearTimeout(timer); delete window[cbName]; script.remove();
+      console.log('📥 Respuesta GAS:', JSON.stringify(res));
+      if(res && res.ok) resolve(res);
+      else { console.error('❌ GAS error:', res); reject(new Error('gas:' + (res?.error||'?'))); }
+    };
+    const sep = GS_URL.includes('?') ? '&' : '?';
+    script.src = GS_URL + sep + 'payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
+    script.onerror = () => { clearTimeout(timer); delete window[cbName]; script.remove(); reject(new Error('network')); };
+    document.head.appendChild(script);
+  });
+
   let enviado = false;
-  try {
-    await new Promise((resolve, reject) => {
-      const payload = JSON.stringify({action:'submit', data});
-      const cbName = 'sbcb_' + Date.now();
-      const script = document.createElement('script');
-      console.log('📤 Enviando a GAS:', nom, wa);
-      const timer = setTimeout(() => {
-        if(window[cbName]){ delete window[cbName]; script.remove(); }
-        console.error('⏱ TIMEOUT — GAS no respondió en 10s. Verifica el deploy.');
-        reject(new Error('timeout'));
-      }, 10000);
-      window[cbName] = (res) => {
-        clearTimeout(timer);
-        delete window[cbName];
-        script.remove();
-        console.log('📥 Respuesta GAS:', JSON.stringify(res));
-        if(res && res.ok) resolve(res);
-        else { console.error('❌ GAS error:', res); reject(new Error('GAS error')); }
-      };
-      const sep = GS_URL.includes('?') ? '&' : '?';
-      script.src = GS_URL + sep + 'payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
-      console.log('🔗 URL:', script.src.substring(0, 100) + '...');
-      script.onerror = (err) => {
-        clearTimeout(timer); delete window[cbName]; script.remove();
-        console.error('🌐 Error de red al llamar GAS');
-        reject(new Error('network'));
-      };
-      document.head.appendChild(script);
-    });
-    enviado = true;
-  } catch(e){
-    console.error('🔴 submit error:', e.message);
+  for(let i = 1; i <= 3 && !enviado; i++){
+    if(i > 1){
+      if(btnEnviar) btnEnviar.textContent = `Reintentando (${i}/3)...`;
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    try {
+      await intentar();
+      enviado = true;
+    } catch(e){
+      console.error(`🔴 Intento ${i} falló:`, e.message);
+      if(e.message.startsWith('gas:')) break;
+    }
   }
 
   _isSubmitting = false;
@@ -2589,7 +2633,7 @@ async function jsonpFetch(url) {
         script.remove();
         reject(new Error('JSONP timeout'));
       }
-    }, 10000);
+    }, 30000);
   });
 }
 
